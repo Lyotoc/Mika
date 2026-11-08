@@ -132,7 +132,9 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
 
     @Synchronized
     fun start() {
-        if (started || Build.VERSION.SDK_INT < MIN_SDK) return
+        // 不再按无线调试的最低版本拦住整个看门狗:安卓 10 没有无线调试,但能用 root 起助手(见 RootControl),
+        // 所以只要这个 App 装得上(minSdk 29)就开始看着助手;能不能配对自己由 paired() 按版本判断。
+        if (started) return
         started = true
         usbScript.start()
         root.refresh()

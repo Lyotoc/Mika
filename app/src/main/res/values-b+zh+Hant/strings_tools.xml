@@ -62,5 +62,4 @@
     <string name="tool_tap">點選</string>
     <string name="tool_type">輸入文字</string>
     <string name="tool_clear">清空輸入框</string>
-    <string name="tool_root">root 指令</string>
-</resources>
+    </resources>

@@ -117,16 +117,12 @@ class BuiltinShellEngine(
 
     override val paired: Boolean get() = platform.paired()
 
-    override val rootStart: Boolean get() = platform.rootStart() == RootStart.Ready
-
     override val restart: HelperRestart get() = when {
         rootStart -> HelperRestart.Root
         platform.paired() -> HelperRestart.Wireless
         platform.usbStarted() -> HelperRestart.UsbCommand
         else -> HelperRestart.None
     }
-
-    override val rootStart: Boolean get() = platform.rootStart() == RootStart.Ready
 
     /** Mika 自己起得来助手:经 su(打开了且能用)或经已配对的无线调试。 */
     private fun selfStart(): Boolean = rootStart || platform.paired()

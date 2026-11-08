@@ -61,7 +61,9 @@ class RootControl(context: Context, private val scope: CoroutineScope, private v
             val found = RootShell.su() != null
             suFound = found
             _state.update { it.copy(suPresent = found) }
-            if (before != null && before != found && _state.value.startRequested) changed()
+            // 第一次发现 su(before 为 null)也要通知:看门狗启动时 su 还没查过,rootStart 曾是 Gone,
+            // 不通知它就永远停在「还没配对」;之后 su 真正消失(变过)才关掉这一项
+            if (before != found && _state.value.startRequested) changed()
         }
     }
 

@@ -46,4 +46,7 @@ interface PhoneDisplay {
 
     /** 任务结束了:放掉这块屏(虚拟屏销毁;主屏只是不再轮询截图)。 */
     fun release()
+
+    /** 最新已发布帧的单调时钟纳秒时间戳(System.nanoTime 时基);还没有过帧为 null。 */
+    fun lastFrameAt(): Long?
 }

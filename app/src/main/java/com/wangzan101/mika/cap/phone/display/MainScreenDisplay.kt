@@ -95,6 +95,7 @@ class MainScreenDisplay(
             lastFull?.recycle()
             lastFull = null
             _frames.value = null
+            lastFrameNanos = 0L
         }
         runCatching { captureFile.delete() }
     }
@@ -122,12 +123,18 @@ class MainScreenDisplay(
                 true,
             )
             // 只换引用。上一帧谁在画、谁在采样都不由这里知道,回收它就可能在对方的 getPixel 里 native abort。
+            lastFrameNanos = System.nanoTime()
             _frames.value = preview
         } finally {
             // full 是这里自己拷出来的一份,没有别人拿到,可以放掉
             full.recycle()
         }
     }
+
+    /** 最新发布帧的时刻(System.nanoTime 时基),与帧一起更新;release 后清空,见 [lastFrameAt]。 */
+    @Volatile private var lastFrameNanos: Long = 0L
+
+    override fun lastFrameAt(): Long? = lastFrameNanos.takeIf { it > 0 }
 
     private val captureFile: File get() = File(dir, "main-screen.png")
 

@@ -129,7 +129,7 @@ class AgentDisplay(
     }
 
     /** 最新已发布帧的单调时钟纳秒时间戳。 */
-    fun lastFrameAt(): Long? = synchronized(frameLock) {
+    override fun lastFrameAt(): Long? = synchronized(frameLock) {
         frameTimestampNanos.takeIf { !released && it > 0 }
     }
 

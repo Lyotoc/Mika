@@ -232,7 +232,7 @@ fun PhoneSetupScreen(status: SystemStatus, repair: Boolean, onFix: (Fix) -> Unit
         onAskUsb = { usbAsked = true },
         onCopyUsbCommand = copyUsbCommand,
         rootLine = rootState.takeIf { it.suPresent }?.let { PhoneSetupCopy.rootOptionLine(it.startGrant) },
-        onRootStart = { if (rootState.start) root.retryStart() else root.setStart(true) },
+        onRootStart = { root.requestStart() },
     )
     // 卡在哪一步都能把诊断信息发给作者:用的是引导页此刻的输入,用户确认过的步骤也在里面
     if (diagnosticsOpen) {

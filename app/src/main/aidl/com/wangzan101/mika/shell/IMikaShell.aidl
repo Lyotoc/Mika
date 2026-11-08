@@ -121,7 +121,7 @@ interface IMikaShell {
 
     // 安卓 10 上没有能看第二块屏的无障碍,任务改在用户的主屏(屏号 0)上操作:打开后主屏也算 Mika 的屏,
     // 可以在上面启动、注入触摸和跑命令;关掉后主屏不再由 Mika 操作(见 MainScreenDisplay)。
-    void setMainScreenMode(boolean on) = 49;
+    void setMainScreenMode(boolean on) = 51;
 
     // 沿用早先定下的销毁事务号;AIDL 要求要么全部方法编号要么都不编号
     void destroy() = 16777114;

@@ -117,9 +117,6 @@ interface BuiltinShellControl {
         else -> HelperRestart.None
     }
 
-    /** 用户打开了「用 root 启动」且此刻能用:看门狗先经 su 起助手(状态是正在连接时,界面说正在用 root 启动)。 */
-    val rootStart: Boolean get() = false
-
     /** 开始找配对端口(用户正在去打开配对窗口)。重复调用无害:还在找就从这时起重新计时。 */
     fun startDiscovery()
     fun stopDiscovery()

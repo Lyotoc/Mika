@@ -47,6 +47,8 @@ interface BuiltinShellPlatform {
     suspend fun launchHelperAsRoot(): SuAnswer? = null
     /** 记下 su 的答复,持久化;null 是忘掉上一次的拒绝(用户点了重试)。 */
     fun setRootAnswer(answer: SuAnswer?) {}
+    /** 用户明确点了 Root 失败后的重试。返回 true 表示平台已发起异步授权,完成后会通知引擎。 */
+    fun requestRootStart(): Boolean = false
 }
 
 /** 看门狗重起助手的间隔:第 n 次失败后等 base·2^(n-1),封顶 [maxMs];连续失败 [maxAttempts] 次后停下等人或等开关变化。 */
@@ -63,16 +65,18 @@ object BuiltinShellFailures {
         // 配对端口连不上:配对窗口已经关了(端口随窗口一起消失)
         AdbPairingException.Reason.CONNECT_FAILED -> BuiltinShellFailure.PairingWindowClosed
         AdbPairingException.Reason.TLS_FAILED, AdbPairingException.Reason.PROTOCOL -> BuiltinShellFailure.Unknown
+        AdbPairingException.Reason.NOT_LOCAL -> BuiltinShellFailure.NotLocal
     }
 
     fun ofConnection(reason: AdbConnectionException.Reason) = when (reason) {
         AdbConnectionException.Reason.UNAUTHORIZED -> BuiltinShellFailure.AuthorizationRevoked
+        AdbConnectionException.Reason.NOT_LOCAL -> BuiltinShellFailure.NotLocal
         AdbConnectionException.Reason.CONNECT_FAILED,
         AdbConnectionException.Reason.TLS_FAILED,
         AdbConnectionException.Reason.PROTOCOL -> BuiltinShellFailure.ConnectFailed
     }
 
-    /** 看门狗自己再试有没有用:钥匙被撤销、没 Wi-Fi 要等用户或开关变化。 */
+    /** 看门狗自己再试有没有用:钥匙被撤销、地址不合法、没 Wi-Fi 要等用户或开关变化。 */
     fun retryable(f: BuiltinShellFailure) = f == BuiltinShellFailure.ConnectFailed ||
         f == BuiltinShellFailure.HelperStartFailed || f == BuiltinShellFailure.Unknown
 }
@@ -122,6 +126,8 @@ class BuiltinShellEngine(
         else -> HelperRestart.None
     }
 
+    override val rootStart: Boolean get() = platform.rootStart() == RootStart.Ready
+
     /** Mika 自己起得来助手:经 su(打开了且能用)或经已配对的无线调试。 */
     private fun selfStart(): Boolean = rootStart || platform.paired()
 
@@ -153,8 +159,8 @@ class BuiltinShellEngine(
                 if (h != null) {
                     synchronized(this@BuiltinShellEngine) { failures = 0; retryJob?.cancel() }
                     autoOn?.reset()
-                    // Mika 自己起不来(没配对、root 没打开或用不了)时来了:是电脑经 USB 起的。记下来,它停了才知道该怎么提示
-                    if (!selfStart()) platform.setUsbStarted(true)
+                    // 没配对、也没用 root 就来了:是电脑经 USB 起的。记下来,它停了才知道该怎么提示
+                    if (!platform.paired() && platform.rootStart() == RootStart.Off) platform.setUsbStarted(true)
                     _status.value = BuiltinShellStatus.Running
                 } else if (!selfStart()) {
                     // App 刚起来时还活着的助手会自己来交接;用着用着断了也可能是正在换一个新的来交接:
@@ -403,9 +409,15 @@ class BuiltinShellEngine(
             failures = 0
             retryJob?.cancel()
         }
-        // 用户看着 su 拒绝、没回话的提示点了重试:忘掉上一次的答复,再问 su 一次(授权框会再弹)
+        // 用户看着 su 拒绝、没回话的提示点了重试:由平台明确再请求一次,未授权状态不会自动问 su
         val s = _status.value
-        if (s is BuiltinShellStatus.Failed && s.reason in ROOT_ASKABLE) platform.setRootAnswer(null)
+        if (s is BuiltinShellStatus.Failed && s.reason in ROOT_ASKABLE) {
+            if (platform.requestRootStart()) {
+                _status.value = BuiltinShellStatus.Connecting
+                return
+            }
+            platform.setRootAnswer(null)
+        }
         // 用户点了重试:之前替用户打开无线调试时的拒绝不再算数(不允许的网络上系统会再问一次)
         autoOn?.reset()
         if (helper.value != null) {

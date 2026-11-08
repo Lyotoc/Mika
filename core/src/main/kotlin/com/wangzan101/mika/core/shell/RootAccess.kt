@@ -48,9 +48,10 @@ object SuProbe {
 }
 
 /**
- * 「用 root 启动手机助手」此刻能不能用。[Off]:用户没打开;[Ready]:打开了、有 su、su 没拒绝过;
- * 其余是打开了却用不了,各自给用户一句话:[Gone] 手机上已经没有 su;[Denied] su 拒绝了;
- * [NoAnswer] su 没回话;[NoShellUid] su 切不到 shell 身份。后三种都要用户点重试才再去问 su(不反复弹授权框)。
+ * 「自动用 root 启动手机助手」此刻能不能用。[Off]:用户没请求过,或还没有明确授权结果;
+ * [Ready]:用户请求过、有 su、并且 su 已确认能切到 shell 身份;其余是授权后用不了,各自给用户一句话。
+ * [Gone] 手机上已经没有 su;[Denied] su 拒绝了;[NoAnswer] su 没回话;[NoShellUid] su 切不到 shell 身份。
+ * 后三种都要用户点重试才再去问 su(不反复弹授权框)。
  */
 enum class RootStart {
     Off, Ready, Gone, Denied, NoAnswer, NoShellUid;
@@ -66,9 +67,9 @@ enum class RootStart {
         }
 
     companion object {
-        /** [enabled]:用户的开关;[suPresent]:找得到 su;[last]:su 上一次的答复(没问过或用户点了重试为 null)。 */
+        /** [enabled]:用户是否请求过自动启动;[suPresent]:找得到 su;[last]:su 明确给过的答复。 */
         fun of(enabled: Boolean, suPresent: Boolean, last: SuAnswer?): RootStart = when {
-            !enabled -> Off
+            !enabled || last == null -> Off
             !suPresent -> Gone
             last == SuAnswer.Denied -> Denied
             last == SuAnswer.NoAnswer -> NoAnswer

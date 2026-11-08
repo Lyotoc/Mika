@@ -89,8 +89,10 @@ object DiagnosticsCollector {
                 appCopies = appCopies(app, phone),
                 adbKey = adbKey(app),
                 appsAfterTask = com.wangzan101.mika.task.AppsAfterTaskEnd.lastLine,
+                helperLaunchStage = phone.shellManager.lastHelperLaunchStage,
+                helperHandoffRejection = phone.hub.lastHandoffRejection,
                 root = phone.shellManager.root.state.value.let { r ->
-                    Diagnostics.rootLine(r.suPresent, r.start, r.startGrant.name, r.commands, r.commandsGrant.name)
+                    Diagnostics.rootLine(r.suPresent, r.startRequested, r.startGrant.name, r.commands, r.commandsGrant.name)
                 },
             ),
             recovery = DiagnosticsSnapshot.Recovery(
@@ -176,6 +178,8 @@ object DiagnosticsCollector {
             SpeechChoice.System -> "system"
             SpeechChoice.Off -> "off"
             is SpeechChoice.Doubao -> "doubao-asr-2.0 / ${c.resourceId}"
+            is SpeechChoice.FunAsr -> "funasr-ws @ ${Diagnostics.host(c.url)}"
+            is SpeechChoice.Bailian -> "bailian-asr / ${c.model} / ${c.region.name}" + if (c.workspace.isNotEmpty()) " / workspace" else ""
             is SpeechChoice.Provider -> c.model + (app.providers.providers.value.firstOrNull { it.id == c.providerId }?.let { " @ ${Diagnostics.host(it.baseUrl)}" } ?: " (provider removed)")
         }
         DiagnosticsSnapshot.Speech(

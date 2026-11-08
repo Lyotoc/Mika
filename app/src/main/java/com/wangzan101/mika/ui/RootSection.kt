@@ -1,6 +1,5 @@
 package com.wangzan101.mika.ui
 
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -17,62 +16,76 @@ import androidx.compose.ui.res.stringResource
 import com.wangzan101.mika.R
 import com.wangzan101.mika.cap.phone.PhoneServices
 import com.wangzan101.mika.cap.phone.setup.RootControl
+import com.wangzan101.mika.core.shell.RootGrant
 import com.wangzan101.mika.ui.components.FooterNote
 import com.wangzan101.mika.ui.components.GroupCard
 import com.wangzan101.mika.ui.components.GroupLabel
 import com.wangzan101.mika.ui.components.ListRow
+import com.wangzan101.mika.ui.components.MikaDialog
 import com.wangzan101.mika.ui.components.MikaSwitch
+import com.wangzan101.mika.ui.components.PageScaffold
+import com.wangzan101.mika.ui.components.RowValue
 import com.wangzan101.mika.ui.components.TileTone
+import com.wangzan101.mika.ui.components.ValueTone
 import com.wangzan101.mika.ui.theme.MikaIcons
 import com.wangzan101.mika.ui.theme.MikaTheme
 
-/** 设置 › 手机操作里 root 那一组,接上真实状态:只在找得到 su 时显示。[helperRow] 为假时(安卓 13 以下)不列「用 root 启动」。 */
+/** 设置 › 高级与其他 › Root。只有高级页检测到 su 才能进入;打开时再刷新一次能力。 */
 @Composable
-fun RootSwitches(helperRow: Boolean) {
+fun RootScreen(helperRow: Boolean, onBack: () -> Unit) {
     val context = LocalContext.current
     val root = remember { PhoneServices.of(context).shellManager.root }
-    // 打开这一页时重新找一次 su(用户可能刚装上或去掉了 root)
     LaunchedEffect(Unit) { root.refresh() }
     val state by root.state.collectAsState()
-    if (!state.suPresent) return
-    RootSection(
-        state, helperRow,
-        onStart = root::setStart, onRetryStart = root::retryStart, onCommands = root::setCommands,
-    )
+    PageScaffold(PhoneSetupCopy.ROOT_GROUP, onBack) {
+        if (state.suPresent) RootSection(state, helperRow, root::requestStart, root::setCommands)
+    }
 }
 
-/**
- * root 一组:「用 root 启动手机助手」和「允许 Mika 执行 root 命令」两个开关,都默认关。
- * 前一个上次被拒或没回应时,点这一行再问一次 su;后一个打开前先弹警告,确认了才去问 su。
- */
+/** 自动启动没有开关;首次或失败后点那一行明确请求。Root 命令开关开启前先展示高风险确认。 */
 @Composable
 fun RootSection(
     state: RootControl.State,
     helperRow: Boolean,
-    onStart: (Boolean) -> Unit,
-    onRetryStart: () -> Unit,
+    onRequestStart: () -> Unit,
     onCommands: (Boolean) -> Unit,
 ) {
     var warn by remember { mutableStateOf(false) }
     val commandsTo = { on: Boolean -> if (on) warn = true else onCommands(false) }
-    GroupLabel(PhoneSetupCopy.ROOT_GROUP)
     GroupCard {
-        if (helperRow) {
-            val retries = PhoneSetupCopy.rootStartRetries(state.start, state.startGrant)
-            ListRow(
-                MikaIcons.Key, PhoneSetupCopy.ROOT_START, PhoneSetupCopy.rootStartLine(state.startGrant), first = true,
-                tone = if (retries) TileTone.Warn else TileTone.Neutral,
-                onClick = if (retries) onRetryStart else ({ onStart(!state.start) }),
-            ) { MikaSwitch(state.start, onStart, Modifier.testTag("root-start")) }
-        }
         ListRow(
-            MikaIcons.Terminal, PhoneSetupCopy.ROOT_COMMANDS, PhoneSetupCopy.rootCommandsLine(state.commands, state.commandsGrant), first = !helperRow,
-            onClick = { commandsTo(!state.commands) },
-        ) { MikaSwitch(state.commands, commandsTo, Modifier.testTag("root-commands")) }
+            MikaIcons.Key, PhoneSetupCopy.ROOT_STATUS_TITLE, PhoneSetupCopy.rootStatusLine(state.startGrant), first = true,
+        ) { RowValue(PhoneSetupCopy.ROOT_AVAILABLE, if (state.startGrant == RootGrant.Granted) ValueTone.Ok else ValueTone.Plain) }
     }
-    FooterNote(PhoneSetupCopy.ROOT_NOTE)
+    if (helperRow) {
+        GroupLabel(stringResource(R.string.settings_phone_ops))
+        GroupCard {
+            val request = state.startGrant != RootGrant.Granted && state.startGrant != RootGrant.Pending
+            ListRow(
+                MikaIcons.Refresh, PhoneSetupCopy.ROOT_START, PhoneSetupCopy.rootStartLine(state.startGrant), first = true,
+                tone = if (state.startGrant == RootGrant.Denied || state.startGrant == RootGrant.NoAnswer) TileTone.Warn else TileTone.Neutral,
+                onClick = if (request) onRequestStart else null,
+            ) { RowValue(PhoneSetupCopy.ROOT_AUTO, if (state.startGrant == RootGrant.Granted) ValueTone.Ok else ValueTone.Plain) }
+        }
+        FooterNote(PhoneSetupCopy.ROOT_NOTE)
+    }
+    GroupLabel(PhoneSetupCopy.ROOT_COMMANDS_GROUP)
+    GroupCard {
+        ListRow(
+            MikaIcons.Terminal, PhoneSetupCopy.ROOT_COMMANDS, PhoneSetupCopy.rootCommandsLine(state.commands, state.commandsGrant), first = true,
+            tone = if (state.commands) TileTone.Warn else TileTone.Neutral,
+            onClick = if (state.commandsGrant == RootGrant.Pending) null else ({ commandsTo(!state.commands) }),
+        ) {
+            MikaSwitch(
+                state.commands,
+                if (state.commandsGrant == RootGrant.Pending) ({ _ -> }) else commandsTo,
+                Modifier.testTag("root-commands"),
+            )
+        }
+    }
+    FooterNote(PhoneSetupCopy.ROOT_COMMANDS_NOTE)
     if (warn) {
-        AlertDialog(
+        MikaDialog(
             onDismissRequest = { warn = false },
             title = { Text(PhoneSetupCopy.ROOT_COMMANDS_TITLE) },
             text = { Text(PhoneSetupCopy.ROOT_COMMANDS_WARNING) },

@@ -20,8 +20,8 @@ android {
         // 10 的无障碍看不到第二块屏,任务改在主屏上操作(见 cap/phone/display/MainScreenDisplay.kt)。
         minSdk = 29
         targetSdk = 35
-        versionCode = 36
-        versionName = "0.1.35"
+        versionCode = 39
+        versionName = "0.1.38"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
         // 关于页版本号后的 Beta 标记;出正式版时改成 false
@@ -100,6 +100,8 @@ dependencies {
     // 两种识别模型都随 APK 安装；首次使用不依赖 Play 服务下载。
     implementation(libs.mlkit.text.recognition)
     implementation(libs.mlkit.text.recognition.chinese)
+    // 微信绑定二维码只在本机编码，不调用在线图片服务。
+    implementation(libs.zxing.core)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

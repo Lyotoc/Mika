@@ -66,6 +66,10 @@ data class DiagnosticsSnapshot(
         val adbKey: String? = null,
         /** 这个进程里最近一次任务结束时 Mika 屏上的 App 留下、关掉了几个(只有个数,不列包名);还没有过为 null。 */
         val appsAfterTask: String? = null,
+        /** 最近启动助手到达的固定阶段;这次进程还没启动过为 null。 */
+        val helperLaunchStage: String? = null,
+        /** 最近一次 Binder 交接拒绝的固定枚举;没有被拒过为 null。 */
+        val helperHandoffRejection: String? = null,
         /** root 那一组:找没找到 su、两个开关和 su 对它们的答复(不含命令内容);旧的调用处不给为 null。 */
         val root: String? = null,
     )
@@ -241,6 +245,8 @@ object Diagnostics {
         line("attention channel", importance(p.attentionChannelImportance))
         line("Wi-Fi", when (p.wifiConnected) { true -> "connected"; false -> "not connected"; null -> "unknown" })
         line("last error", p.lastError?.takeIf { it.isNotBlank() }?.take(MAX_ERROR) ?: "none")
+        line("helper launch stage", p.helperLaunchStage ?: "not tried in this session")
+        line("helper handoff rejection", p.helperHandoffRejection ?: "none")
         line("adb key status", p.adbKey ?: "unknown")
         p.root?.let { line("root", it) }
         line("app copies", p.appCopies ?: "unknown")

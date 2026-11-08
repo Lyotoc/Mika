@@ -117,6 +117,8 @@ class BuiltinShellEngine(
 
     override val paired: Boolean get() = platform.paired()
 
+    override val rootStart: Boolean get() = platform.rootStart() == RootStart.Ready
+
     override val restart: HelperRestart get() = when {
         rootStart -> HelperRestart.Root
         platform.paired() -> HelperRestart.Wireless

@@ -60,4 +60,5 @@
     <string name="tool_tap">Нажать</string>
     <string name="tool_type">Ввести текст</string>
     <string name="tool_clear">Очистить поле</string>
+    <string name="tool_root">Команда root</string>
 </resources>

@@ -1,0 +1,64 @@
+
+com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest:.
+Error in typingIntoAFieldThatReportsLateIsNotDuplicated(com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest):
+java.lang.IllegalStateException: Mika accessibility service is not enabled
+	at com.wangzan101.mika.cap.phone.a11y.DeviceSupport.service(DeviceSupport.kt:50)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest$typingIntoAFieldThatReportsLateIsNotDuplicated$1.invokeSuspend(MainScreenDeviceTest.kt:77)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest.typingIntoAFieldThatReportsLateIsNotDuplicated(MainScreenDeviceTest.kt:73)
+
+Error in retryOnAStuckReadbackDoesNotAppendASecondCopy(com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest):
+java.lang.IllegalStateException: Mika accessibility service is not enabled
+	at com.wangzan101.mika.cap.phone.a11y.DeviceSupport.service(DeviceSupport.kt:50)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest$retryOnAStuckReadbackDoesNotAppendASecondCopy$1.invokeSuspend(MainScreenDeviceTest.kt:98)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest.retryOnAStuckReadbackDoesNotAppendASecondCopy(MainScreenDeviceTest.kt:94)
+
+
+Time: 29.523
+There were 2 failures:
+1) typingIntoAFieldThatReportsLateIsNotDuplicated(com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest)
+java.lang.IllegalStateException: Mika accessibility service is not enabled
+	at com.wangzan101.mika.cap.phone.a11y.DeviceSupport.service(DeviceSupport.kt:50)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest$typingIntoAFieldThatReportsLateIsNotDuplicated$1.invokeSuspend(MainScreenDeviceTest.kt:77)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest.typingIntoAFieldThatReportsLateIsNotDuplicated(MainScreenDeviceTest.kt:73)
+2) retryOnAStuckReadbackDoesNotAppendASecondCopy(com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest)
+java.lang.IllegalStateException: Mika accessibility service is not enabled
+	at com.wangzan101.mika.cap.phone.a11y.DeviceSupport.service(DeviceSupport.kt:50)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest$retryOnAStuckReadbackDoesNotAppendASecondCopy$1.invokeSuspend(MainScreenDeviceTest.kt:98)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.wangzan101.mika.cap.phone.a11y.MainScreenDeviceTest.retryOnAStuckReadbackDoesNotAppendASecondCopy(MainScreenDeviceTest.kt:94)
+
+FAILURES!!!
+Tests run: 3,  Failures: 2
+
+

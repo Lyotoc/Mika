@@ -525,7 +525,12 @@ class WebScreen(
         val tab = (ready() as? Ready.Tab)?.tab?.takeIf { !borrowed(it) } ?: return false
         val shown = withContext(Dispatchers.Main) {
             val v = tab.view
-            val ime = v.rootWindowInsets?.isVisible(android.view.WindowInsets.Type.ime()) == true
+            // WindowInsets.isVisible(Type.ime()) 是安卓 11 起才有的:更早的系统判断不了输入法,不滚(宁可不动)
+            val ime = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                v.rootWindowInsets?.isVisible(android.view.WindowInsets.Type.ime()) == true
+            } else {
+                true
+            }
             v.isAttachedToWindow && v.isShown && v.windowVisibility == android.view.View.VISIBLE && !ime
         }
         if (!shown) return false

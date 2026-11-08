@@ -1,0 +1,5 @@
+INSTRUMENTATION_STATUS: test=typingIntoAFieldThatReportsLateIsNotDuplicated
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: stack=org.junit.AssumptionViolatedException: Mika 无障碍服务在 instrumentation 进程里没有绑定(安卓 10 不自动重绑)
+INSTRUMENTATION_STATUS: test=typingIntoAFieldThatReportsLateIsNotDuplicated
+INSTRUMENTATION_STATUS_CODE: -4

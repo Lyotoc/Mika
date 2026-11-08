@@ -24,6 +24,7 @@ import com.wangzan101.mika.cap.phone.display.AgentDisplay
 import com.wangzan101.mika.cap.phone.display.FrameMath
 import com.wangzan101.mika.cap.phone.display.LazyAgentDisplay
 import com.wangzan101.mika.cap.phone.setup.DeveloperSettings
+import com.wangzan101.mika.cap.phone.setup.RootShell
 import com.wangzan101.mika.cap.phone.shell.ShellBinding
 import com.wangzan101.mika.cap.phone.shell.ShellService
 import com.wangzan101.mika.cap.sandbox.AndroidSandbox
@@ -96,7 +97,9 @@ class AndroidSelfCheck(context: Context, private val status: () -> SystemStatus)
             wirelessDebugging = !wirelessMissing,
             appVersion = BuildConfig.VERSION_NAME, appBuild = BuildConfig.GIT_HASH,
             developerOptionsPage = !devPageMissing,
-            phoneControlUnavailable = PhoneSetupFlow.unavailable(devPageMissing, wirelessMissing, st.builtinShell, st.helperRestart),
+            phoneControlUnavailable = PhoneSetupFlow.unavailable(
+                devPageMissing, wirelessMissing, st.builtinShell, st.helperRestart, rootAvailable = RootShell.su() != null,
+            ),
         )
     }
 

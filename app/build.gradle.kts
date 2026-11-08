@@ -16,7 +16,9 @@ android {
 
     defaultConfig {
         applicationId = "com.wangzan101.mika"
-        minSdk = 30
+        // 安卓 10(29)起:10 上没有无线调试配对,用 root 起助手(见 core/shell/RootAccess.kt);
+        // 10 的无障碍看不到第二块屏,任务改在主屏上操作(见 cap/phone/display/MainScreenDisplay.kt)。
+        minSdk = 29
         targetSdk = 35
         versionCode = 36
         versionName = "0.1.35"

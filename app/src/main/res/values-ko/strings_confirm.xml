@@ -10,4 +10,6 @@
     <string name="confirm_in_app">%1$s에서</string>
     <string name="confirm_target">받는 사람: %1$s</string>
     <string name="confirm_content">내용: %1$s</string>
+    <string name="confirm_root">root 명령</string>
+    <string name="confirm_root_where">휴대전화 전체(root)</string>
 </resources>

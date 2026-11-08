@@ -3,6 +3,7 @@ package com.wangzan101.mika.ui
 import com.wangzan101.mika.R
 import com.wangzan101.mika.i18n.tr
 import com.wangzan101.mika.core.shell.BuiltinShellFailure
+import com.wangzan101.mika.core.shell.RootGrant
 import com.wangzan101.mika.core.shell.BuiltinShellFix
 import com.wangzan101.mika.core.shell.BuiltinShellStatus
 import com.wangzan101.mika.core.shell.HelperRestart
@@ -120,8 +121,11 @@ object PhoneSetupCopy {
     val CONNECT_PORT_SUBMIT: String get() = tr(R.string.phone_connect_port_submit)
     val SUCCESS_LINE: String get() = tr(R.string.phone_success)
     /** 成功页底部的提醒:手机重启后怎么让助手回来,看它上次是怎么起的。 */
-    fun successNote(restart: HelperRestart): String =
-        if (restart == HelperRestart.UsbCommand) tr(R.string.phone_success_note_usb) else tr(R.string.phone_success_note)
+    fun successNote(restart: HelperRestart): String = when (restart) {
+        HelperRestart.UsbCommand -> tr(R.string.phone_success_note_usb)
+        HelperRestart.Root -> tr(R.string.phone_success_note_root)
+        HelperRestart.Wireless, HelperRestart.None -> tr(R.string.phone_success_note)
+    }
     /** 首次上手最后一步成功后的底部按钮;从设置进来的是 [SUCCESS_DONE]。 */
     val START_USING: String get() = tr(R.string.phone_start_using)
     val SUCCESS_DONE: String get() = tr(R.string.done)
@@ -177,6 +181,22 @@ object PhoneSetupCopy {
             tr(R.string.fail_usb_stopped),
             tr(R.string.fail_usb_stopped_body),
         )
+        BuiltinShellFailure.RootDenied -> FailureCopy(
+            tr(R.string.fail_root_denied),
+            tr(R.string.fail_root_denied_body),
+        )
+        BuiltinShellFailure.RootNoAnswer -> FailureCopy(
+            tr(R.string.fail_root_no_answer),
+            tr(R.string.fail_root_no_answer_body),
+        )
+        BuiltinShellFailure.RootUnavailable -> FailureCopy(
+            tr(R.string.fail_root_gone),
+            tr(R.string.fail_root_gone_body),
+        )
+        BuiltinShellFailure.RootNoShellUid -> FailureCopy(
+            tr(R.string.fail_root_no_shell),
+            tr(R.string.fail_root_no_shell_body),
+        )
         BuiltinShellFailure.Unknown -> FailureCopy(
             tr(R.string.fail_unknown),
             tr(R.string.fail_unknown_body),
@@ -201,9 +221,15 @@ object PhoneSetupCopy {
     val ROW_TITLE: String get() = tr(R.string.settings_phone_ops)
     val ROW_SUBTITLE: String get() = tr(R.string.phone_row_sub)
 
-    /** 设置 › 手机操作页底部的完整说明:只用 USB 启动命令起过助手时,说重启后要再运行命令,不说打开无线调试。 */
-    fun usageNote(restart: HelperRestart): String =
-        if (restart == HelperRestart.UsbCommand) tr(R.string.phone_usage_note_usb) else tr(R.string.phone_usage_note)
+    /**
+     * 设置 › 手机操作页底部的完整说明:只用 USB 启动命令起过助手时,说重启后要再运行命令,不说打开无线调试;
+     * 用 root 启动时说重启后 Mika 自己再用 root 起。
+     */
+    fun usageNote(restart: HelperRestart): String = when (restart) {
+        HelperRestart.UsbCommand -> tr(R.string.phone_usage_note_usb)
+        HelperRestart.Root -> tr(R.string.phone_usage_note_root)
+        HelperRestart.Wireless, HelperRestart.None -> tr(R.string.phone_usage_note)
+    }
 
     fun statusValue(s: BuiltinShellStatus): Pair<String, ValueTone> = when (s) {
         BuiltinShellStatus.Running -> tr(R.string.sandbox_ready) to ValueTone.Ok
@@ -213,23 +239,68 @@ object PhoneSetupCopy {
         is BuiltinShellStatus.Failed -> tr(R.string.phone_error) to ValueTone.Bad
     }
 
-    /** 「高级」里状态那一行的说明。[usbDebugging] 关着时,在运行也提醒一句:断了 Wi-Fi 就会停。 */
-    fun statusLine(s: BuiltinShellStatus, usbDebugging: Boolean = true): String = when (s) {
+    /**
+     * 「高级」里状态那一行的说明。[usbDebugging] 关着时,在运行也提醒一句:断了 Wi-Fi 就会停(经 root 起的不靠 Wi-Fi,不提醒)。
+     * [rootStart]:看门狗经 su 起助手(用户打开了「用 root 启动」且能用),正在连接时说正在用 root 启动。
+     */
+    fun statusLine(s: BuiltinShellStatus, usbDebugging: Boolean = true, rootStart: Boolean = false): String = when (s) {
         BuiltinShellStatus.Running ->
-            if (usbDebugging) tr(R.string.phone_line_running) else tr(R.string.phone_line_running_no_usb)
+            if (usbDebugging || rootStart) tr(R.string.phone_line_running) else tr(R.string.phone_line_running_no_usb)
         BuiltinShellStatus.NotPaired -> tr(R.string.phone_line_not_paired)
         BuiltinShellStatus.WirelessDebuggingOff -> tr(R.string.phone_line_wireless_off)
-        BuiltinShellStatus.Connecting -> tr(R.string.phone_connecting)
+        BuiltinShellStatus.Connecting -> if (rootStart) ROOT_STARTING_LINE else tr(R.string.phone_connecting)
         is BuiltinShellStatus.Failed -> when (s.reason) {
             BuiltinShellFailure.NoWifi -> NO_WIFI_LINE
             BuiltinShellFailure.WifiNotAllowed -> tr(R.string.phone_line_joined, failure(s.reason).title, WIFI_NOT_ALLOWED_LINE)
             // 停了要用户动手:直接说怎么再起
-            BuiltinShellFailure.UsbHelperStopped -> failure(s.reason).body
+            BuiltinShellFailure.UsbHelperStopped, in ROOT_FAILURES -> failure(s.reason).body
             else -> failure(s.reason).title
         }
     }
 
     val NO_WIFI_LINE: String get() = tr(R.string.phone_no_wifi_line)
+    val ROOT_STARTING_LINE: String get() = tr(R.string.phone_root_line_starting)
+
+    /** 「用 root 启动」用不了的几种原因:状态行、横幅都直接说为什么、怎么办。 */
+    val ROOT_FAILURES = setOf(
+        BuiltinShellFailure.RootDenied, BuiltinShellFailure.RootNoAnswer, BuiltinShellFailure.RootUnavailable, BuiltinShellFailure.RootNoShellUid,
+    )
+
+    // ---------- root ----------
+
+    val ROOT_GROUP: String get() = tr(R.string.phone_root_group)
+    val ROOT_START: String get() = tr(R.string.phone_root_start)
+    val ROOT_COMMANDS: String get() = tr(R.string.phone_root_commands)
+    val ROOT_COMMANDS_TITLE: String get() = tr(R.string.phone_root_commands_title)
+    val ROOT_COMMANDS_WARNING: String get() = tr(R.string.phone_root_commands_warning)
+    val ROOT_COMMANDS_CONFIRM: String get() = tr(R.string.phone_root_commands_confirm)
+    val ROOT_NOTE: String get() = tr(R.string.phone_root_note)
+    val ROOT_OPTION: String get() = tr(R.string.phone_root_option)
+    val ROOT_OPTION_BODY: String get() = tr(R.string.phone_root_option_body)
+    val ROOT_PENDING: String get() = tr(R.string.phone_root_pending)
+
+    /** 「用 root 启动」那一行下面的说明:按 su 的答复说;拒绝、没回应时点这一行再问一次。 */
+    fun rootStartLine(grant: RootGrant): String = when (grant) {
+        RootGrant.Pending -> ROOT_PENDING
+        RootGrant.Denied -> tr(R.string.phone_root_denied_sub)
+        RootGrant.NoAnswer -> tr(R.string.phone_root_no_answer_sub)
+        RootGrant.NoShellUid -> tr(R.string.phone_root_no_shell_sub)
+        RootGrant.Unknown, RootGrant.Granted -> tr(R.string.phone_root_start_sub)
+    }
+
+    /** 引导页「用 root 启动」下面那一句:没问过或答应了就是说明,否则是 su 的答复。 */
+    fun rootOptionLine(grant: RootGrant): String =
+        if (grant == RootGrant.Unknown || grant == RootGrant.Granted) ROOT_OPTION_BODY else rootStartLine(grant)
+
+    /** 点「用 root 启动」那一行是再问一次 su(开着、上次被拒或没回应时)。 */
+    fun rootStartRetries(on: Boolean, grant: RootGrant): Boolean = on && (grant == RootGrant.Denied || grant == RootGrant.NoAnswer)
+
+    /** 「允许 Mika 执行 root 命令」那一行下面的说明。 */
+    fun rootCommandsLine(on: Boolean, grant: RootGrant): String = when {
+        grant == RootGrant.Pending -> ROOT_PENDING
+        !on && (grant == RootGrant.Denied || grant == RootGrant.NoAnswer) -> tr(R.string.phone_root_commands_denied)
+        else -> tr(R.string.phone_root_commands_sub)
+    }
     val WIFI_NOT_ALLOWED_LINE: String get() = tr(R.string.phone_wifi_not_allowed_line)
 
     val REPAIR: String get() = tr(R.string.phone_repair)

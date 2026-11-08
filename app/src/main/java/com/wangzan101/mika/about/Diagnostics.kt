@@ -66,6 +66,8 @@ data class DiagnosticsSnapshot(
         val adbKey: String? = null,
         /** 这个进程里最近一次任务结束时 Mika 屏上的 App 留下、关掉了几个(只有个数,不列包名);还没有过为 null。 */
         val appsAfterTask: String? = null,
+        /** root 那一组:找没找到 su、两个开关和 su 对它们的答复(不含命令内容);旧的调用处不给为 null。 */
+        val root: String? = null,
     )
 
     data class Recovery(
@@ -201,6 +203,7 @@ object Diagnostics {
         line("helper restart", when (i.restart) {
             HelperRestart.Wireless -> "wireless debugging (paired)"
             HelperRestart.UsbCommand -> "USB start command"
+            HelperRestart.Root -> "root (su)"
             HelperRestart.None -> "not set up"
         })
         line("setup", "phase=${view.phase}" + (view.current?.let { ", current=${step(it)}" } ?: ""))
@@ -239,6 +242,7 @@ object Diagnostics {
         line("Wi-Fi", when (p.wifiConnected) { true -> "connected"; false -> "not connected"; null -> "unknown" })
         line("last error", p.lastError?.takeIf { it.isNotBlank() }?.take(MAX_ERROR) ?: "none")
         line("adb key status", p.adbKey ?: "unknown")
+        p.root?.let { line("root", it) }
         line("app copies", p.appCopies ?: "unknown")
         p.appsAfterTask?.let { line("apps after task", it) }
     }
@@ -275,6 +279,15 @@ object Diagnostics {
     fun host(url: String): String = runCatching { URI(url.trim()).host }.getOrNull()?.takeIf { it.isNotBlank() } ?: "(unparsed host)"
 
     private fun onOff(b: Boolean) = if (b) "on" else "off"
+
+    /**
+     * root 那一行:没找到 su 时只说这个;找到了再写「用 root 启动」「root 命令」两个开关和 su 上一次的答复。
+     * 例:`su found; start on (Granted); commands off (Unknown)`。
+     */
+    fun rootLine(suPresent: Boolean, start: Boolean, startGrant: String, commands: Boolean, commandsGrant: String): String =
+        if (!suPresent && !start && !commands) "no su found"
+        else (if (suPresent) "su found" else "su not found") +
+            "; start ${onOff(start)} ($startGrant); commands ${onOff(commands)} ($commandsGrant)"
 
     private fun yes(b: Boolean) = if (b) "yes" else "no"
 

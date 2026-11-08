@@ -31,6 +31,8 @@ import com.wangzan101.mika.core.shell.RecoveryCapability
 import com.wangzan101.mika.core.shell.RecoveryConsent
 import com.wangzan101.mika.core.shell.WirelessDebuggingAutoOn
 import com.wangzan101.mika.core.shell.ShellCommandRunner
+import com.wangzan101.mika.core.shell.SuAnswer
+import com.wangzan101.mika.core.shell.SuProbe
 import com.wangzan101.mika.cap.phone.shell.HelperHub
 import com.wangzan101.mika.cap.phone.shell.adb.AndroidAdb
 import com.wangzan101.mika.cap.phone.shell.adb.NsdAdbServiceFinder
@@ -41,14 +43,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.net.Inet4Address
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * 内置助手的真实现:配对、经本机 adbd 起助手、看门狗。由 [com.wangzan101.mika.cap.phone.PhoneServices] 建一份,
+ * 内置助手的真实现:配对、经本机 adbd 或 su 起助手、看门狗。由 [com.wangzan101.mika.cap.phone.PhoneServices] 建一份,
  * App 启动时由 [start] 开始看着助手;[hub] 是助手交来 Binder 的落点;[consent] 是用户对那几项能力的选择(「自动打开无线调试」看它)。
  */
 class BuiltinShellManager(context: Context, private val hub: HelperHub, private val consent: () -> RecoveryConsent) {
@@ -59,8 +65,13 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
     /** 正在扫本机找无线调试端口(引导页显示「正在本机查找…」)。 */
     val scanningPorts: StateFlow<Boolean> = _scanningPorts.asStateFlow()
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /** 已 root 的手机上「用 root 启动手机助手」「允许 Mika 执行 root 命令」两个开关;变了就让看门狗按新的情况再试。 */
+    val root = RootControl(app, scope) { engine.rootChanged() }
+
     private val platform: AndroidPlatform by lazy {
-        AndroidPlatform(app, hub, { lastConnectCandidates = it }, { _scanningPorts.value = it })
+        AndroidPlatform(app, hub, root, { lastConnectCandidates = it }, { _scanningPorts.value = it })
     }
 
     /** 最近一次找连接端口时各来源给了几个候选(诊断信息用);这次进程里还没连过为 null。 */
@@ -80,7 +91,7 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
     /** 配对客户端 + 看门狗。 */
     val engine: BuiltinShellEngine by lazy {
         BuiltinShellEngine(
-            platform, hub.shell, CoroutineScope(SupervisorJob() + Dispatchers.Default), Dispatchers.IO, autoOn = wirelessAutoOn,
+            platform, hub.shell, scope, Dispatchers.IO, autoOn = wirelessAutoOn,
         )
     }
 
@@ -112,9 +123,12 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
 
     @Synchronized
     fun start() {
-        if (started || Build.VERSION.SDK_INT < MIN_SDK) return
+        // 不再按无线调试的最低版本拦住整个看门狗:安卓 10 没有无线调试,但能用 root 起助手(见 RootControl),
+        // 所以只要这个 App 装得上(minSdk 29)就开始看着助手;能不能配对自己由 paired() 按版本判断。
+        if (started) return
         started = true
         usbScript.start()
+        root.refresh()
         val e = engine
         // 无线调试一打开就试着连回去;关掉时状态马上变成「无线调试已关」
         app.contentResolver.registerContentObserver(
@@ -139,6 +153,7 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
     private class AndroidPlatform(
         private val app: Context,
         private val hub: HelperHub,
+        private val root: RootControl,
         private val candidates: (ConnectCandidates) -> Unit,
         private val scanning: (Boolean) -> Unit,
     ) : BuiltinShellPlatform {
@@ -156,6 +171,45 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
 
         override fun setPaired(paired: Boolean) {
             prefs.edit().putBoolean("paired", paired).apply()
+        }
+
+        override fun rootStart() = root.rootStart()
+
+        override fun setRootAnswer(answer: SuAnswer?) = root.setStartAnswer(answer)
+
+        /**
+         * 经 su 以 shell 身份起同一个助手:`su 2000 -c '<id -u; 和无线调试同样的命令>'`。先读到 2000(su 答应了、也切到了 shell)
+         * 才把口令写进标准输入;交接核对和无线调试起的完全一样(shell 身份、APK、口令、签名指纹)。
+         * 交接到了(或超时)再关标准输入,sh 读到结尾就退出;助手在 setsid 另起的会话里,不受影响。
+         */
+        override suspend fun launchHelperAsRoot(): SuAnswer? {
+            val su = RootShell.su() ?: return null.also { root.suGone() }
+            val command = HelperHandoff.rootCommand(app.applicationInfo.sourceDir, app.packageName, Process.myUid(), ownCertPin(app))
+            val p = RootShell.start(SuProbe.shellArgs(su, command))
+            val before = hub.shell.value
+            try {
+                val uid = try {
+                    runInterruptible { RootShell.readUid(p, ROOT_ASK_MS) }
+                } catch (e: TimeoutException) {
+                    return SuAnswer.NoAnswer
+                } catch (e: ExecutionException) {
+                    return SuAnswer.Denied
+                }
+                when (uid) {
+                    null -> return SuAnswer.Denied
+                    HelperHandoff.SHELL_UID -> Unit
+                    else -> return SuAnswer.WrongUid
+                }
+                p.outputStream.apply {
+                    write(HelperHandoff.stdinLine(hub.issueLaunchNonce()))
+                    flush()
+                }
+                withTimeoutOrNull(HANDOFF_WAIT_MS) { hub.shell.first { s -> s != null && s !== before } }
+                return SuAnswer.Granted
+            } finally {
+                runCatching { p.outputStream.close() }
+                if (!p.waitFor(2, TimeUnit.SECONDS)) p.destroy()
+            }
         }
 
         override fun usbStarted() = prefs.getBoolean("usbStarted", false)
@@ -219,6 +273,7 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
         }
 
         override fun forget() {
+            root.turnOffStart()
             hub.forget()
             AndroidAdb.forget(app)
             prefs.edit().remove("port").apply()
@@ -242,5 +297,7 @@ class BuiltinShellManager(context: Context, private val hub: HelperHub, private 
         private const val LOCALHOST = AdbConnectPort.LOCALHOST
         private const val PORT_RANGE_FILE = "/proc/sys/net/ipv4/ip_local_port_range"
         private const val HANDOFF_WAIT_MS = 15_000L
+        /** 看门狗经 su 起助手时等 su 回话(授权过的马上回;要弹授权框时给用户一点时间)。 */
+        private const val ROOT_ASK_MS = 45_000L
     }
 }

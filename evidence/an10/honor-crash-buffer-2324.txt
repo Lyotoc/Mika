@@ -1,0 +1,211 @@
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: FATAL EXCEPTION: main
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: Process: com.wangzan101.mika, PID: 23689
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: java.lang.NoSuchMethodError: No virtual method getWindowsOnAllDisplays()Landroid/util/SparseArray; in class Lcom/wangzan101/mika/cap/phone/a11y/ScreenAccessibility; or its super classes (declaration of 'com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility' appears in /data/app/com.wangzan101.mika-hs5GlpP_vgxG1cJ3CS23SA==/base.apk!classes24.dex)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.displayOf(ScreenAccessibility.kt:212)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.onAccessibilityEvent(ScreenAccessibility.kt:87)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$2.onAccessibilityEvent(AccessibilityService.java:1635)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.executeMessage(AccessibilityService.java:1824)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:219)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8401)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+11-05 03:25:43.090 23689 23689 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1087)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: FATAL EXCEPTION: main
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: Process: com.wangzan101.mika, PID: 30234
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: java.lang.NoSuchMethodError: No virtual method getWindowsOnAllDisplays()Landroid/util/SparseArray; in class Lcom/wangzan101/mika/cap/phone/a11y/ScreenAccessibility; or its super classes (declaration of 'com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility' appears in /data/app/com.wangzan101.mika-JlwugLZUH6k8MkWQaVoa1g==/base.apk!classes24.dex)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.displayOf(ScreenAccessibility.kt:212)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.onAccessibilityEvent(ScreenAccessibility.kt:87)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$2.onAccessibilityEvent(AccessibilityService.java:1635)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.executeMessage(AccessibilityService.java:1824)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:219)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8401)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+11-05 03:57:01.798 30234 30234 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1087)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: FATAL EXCEPTION: main
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: Process: com.wangzan101.mika, PID: 31156
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: java.lang.NoSuchMethodError: No virtual method getWindowsOnAllDisplays()Landroid/util/SparseArray; in class Lcom/wangzan101/mika/cap/phone/a11y/ScreenAccessibility; or its super classes (declaration of 'com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility' appears in /data/app/com.wangzan101.mika-JlwugLZUH6k8MkWQaVoa1g==/base.apk!classes24.dex)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.displayOf(ScreenAccessibility.kt:212)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.onAccessibilityEvent(ScreenAccessibility.kt:87)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$2.onAccessibilityEvent(AccessibilityService.java:1635)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.executeMessage(AccessibilityService.java:1824)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:219)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8401)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+11-05 04:13:28.582 31156 31156 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1087)
+11-05 04:26:42.379   447   447 E AndroidRuntime: FATAL EXCEPTION: main
+11-05 04:26:42.379   447   447 E AndroidRuntime: Process: com.wangzan101.mika, PID: 447
+11-05 04:26:42.379   447   447 E AndroidRuntime: java.lang.NoSuchMethodError: No virtual method getWindowsOnAllDisplays()Landroid/util/SparseArray; in class Lcom/wangzan101/mika/cap/phone/a11y/ScreenAccessibility; or its super classes (declaration of 'com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility' appears in /data/app/com.wangzan101.mika-nb_rur52DqGDyNFRVRYJlg==/base.apk!classes24.dex)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.displayOf(ScreenAccessibility.kt:212)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.onAccessibilityEvent(ScreenAccessibility.kt:87)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$2.onAccessibilityEvent(AccessibilityService.java:1635)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.executeMessage(AccessibilityService.java:1824)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:219)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8401)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+11-05 04:26:42.379   447   447 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1087)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: FATAL EXCEPTION: main
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: Process: com.wangzan101.mika, PID: 3954
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: java.lang.NoSuchMethodError: No direct method <init>(Landroid/view/accessibility/AccessibilityEvent;)V in class Landroid/view/accessibility/AccessibilityEvent; or its super classes (declaration of 'android.view.accessibility.AccessibilityEvent' appears in /system/framework/framework.jar!classes3.dex)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility.onAccessibilityEvent(ScreenAccessibility.kt:90)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$2.onAccessibilityEvent(AccessibilityService.java:1635)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.executeMessage(AccessibilityService.java:1824)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:219)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8401)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+11-05 05:26:24.193  3954  3954 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1087)
+11-05 09:02:26.676  6535 17201 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 17201 (DefaultDispatch), pid 6535 (wangzan101.mika)
+11-05 09:02:26.879 21146 21146 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-05 09:02:26.880 21146 21146 F DEBUG   : Build fingerprint: 'HONOR/KOZ-AL00/HNKOZ-S:10/HONORKOZ-AL00/4.0.0.136C00:user/release-keys'
+11-05 09:02:26.880 21146 21146 F DEBUG   : Revision: '0'
+11-05 09:02:26.880 21146 21146 F DEBUG   : ABI: 'arm64'
+11-05 09:02:26.880 21146 21146 F DEBUG   : Timestamp: 2026-11-05 09:02:26+0800
+11-05 09:02:26.880 21146 21146 F DEBUG   : pid: 6535, tid: 17201, name: DefaultDispatch  >>> com.wangzan101.mika <<<
+11-05 09:02:26.880 21146 21146 F DEBUG   : uid: 10161
+11-05 09:02:26.880 21146 21146 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-05 09:02:26.880 21146 21146 F DEBUG   : Abort message: 'Error, cannot access an invalid/free'd bitmap here!'
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x0  0000000000000000  x1  0000000000004331  x2  0000000000000006  x3  0000007833ecc810
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x4  0000000000000000  x5  0000000000000000  x6  0000000000000000  x7  7f7f7f7f7f7f7f7f
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x8  00000000000000f0  x9  00000079293a99a0  x10 0000000000000000  x11 0000000000000001
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x12 0000000000000018  x13 ffffffffffffffff  x14 0000000000000004  x15 ffffffffffffffff
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x16 0000007929461950  x17 0000007929441010  x18 00000077df0e2000  x19 0000000000001987
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x20 0000000000004331  x21 00000000ffffffff  x22 0000007833ecf020  x23 00000000131b2f08
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x24 00000078273d3000  x25 00000000000002bd  x26 00000000000002bd  x27 000000006f648ae8
+11-05 09:02:26.881 21146 21146 F DEBUG   :     x28 0000000000000015  x29 0000007833ecc8b0
+11-05 09:02:26.881 21146 21146 F DEBUG   :     sp  0000007833ecc7f0  lr  00000079293f5bc0  pc  00000079293f5bf0
+11-05 09:02:27.144 21146 21146 F DEBUG   : 
+11-05 09:02:27.144 21146 21146 F DEBUG   : backtrace:
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #00 pc 000000000006fbf0  /apex/com.android.runtime/lib64/bionic/libc.so (abort+164) (BuildId: 4af1efc55252d66adbdfe430d101fefd)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #01 pc 0000000000009a74  /system/lib64/liblog.so (__android_log_assert+324) (BuildId: 112a3703a951586241f432958af765d8)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #02 pc 00000000001a240c  /system/lib64/libandroid_runtime.so (Bitmap_getPixel(_JNIEnv*, _jobject*, long, int, int)+280) (BuildId: 223281c89c34539d84f4d240a5c556e5)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #03 pc 00000000002ee058  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+168) (BuildId: 33ea30d01c8f8efcc97923c710f0181303c1dff9)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #04 pc 0000000002196cb8  /memfd:/jit-cache (deleted) (android.graphics.Bitmap.getPixel+136)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #05 pc 00000000022563dc  /memfd:/jit-cache (deleted) (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$frameSignature$1$1.invoke+92)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #06 pc 0000000002212318  /memfd:/jit-cache (deleted) (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$frameSignature$1$1.invoke+168)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #07 pc 00000000023ead68  /memfd:/jit-cache (deleted) (com.wangzan101.mika.cap.phone.display.FrameMath.lumaGrid+504)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #08 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #09 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #10 pc 00000000002f4218  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #11 pc 00000000002eef68  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+900) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #12 pc 00000000005b2f84  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtual+836) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #13 pc 000000000013f814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #14 pc 000000000002f682  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.AndroidScreen.frameSignature+98)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #15 pc 00000000005b5574  /apex/com.android.runtime/lib64/libart.so (MterpInvokeDirect+1168) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #16 pc 000000000013f914  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_direct+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #17 pc 000000000002f604  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.AndroidScreen.access$frameSignature)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #18 pc 00000000005b5d80  /apex/com.android.runtime/lib64/libart.so (MterpInvokeStatic+1136) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #19 pc 000000000013f994  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_static+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #20 pc 0000000000021a7c  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$awaitChange$6.invoke+8)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #21 pc 00000000005b31d8  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtual+1432) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #22 pc 000000000013f814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #23 pc 0000000000021a98  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$awaitChange$6.invoke)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #24 pc 00000000005b49d8  /apex/com.android.runtime/lib64/libart.so (MterpInvokeInterface+1752) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #25 pc 000000000013fa14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_interface+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #26 pc 0000000000037500  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.ChangeWait.awaitStableChange+392)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #27 pc 00000000005b65d8  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtualRange+1056) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #28 pc 000000000013fb14  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual_range+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #29 pc 0000000000037340  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.ChangeWait$awaitStableChange$1.invokeSuspend+40)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #30 pc 00000000002c4908  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.214322969176268902+320) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #31 pc 00000000005a3ddc  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1024) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #32 pc 000000000014e468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #33 pc 00000000020040ac  /memfd:/jit-cache (deleted) (kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith+204)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #34 pc 000000000201b73c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.DispatchedTask.run+1180)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #35 pc 000000000221248c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.internal.LimitedDispatcher$Worker.run+124)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #36 pc 00000000024464a4  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.TaskImpl.run+68)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #37 pc 000000000229bf5c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely+60)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #38 pc 000000000229cf0c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask+364)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #39 pc 0000000002445eb4  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker+180)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #40 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #41 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #42 pc 00000000002f4218  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #43 pc 00000000002eef68  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+900) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #44 pc 00000000005b5330  /apex/com.android.runtime/lib64/libart.so (MterpInvokeDirect+588) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.145 21146 21146 F DEBUG   :       #45 pc 000000000013f914  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_direct+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #46 pc 000000000048c340  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #47 pc 00000000002c4908  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.214322969176268902+320) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #48 pc 00000000005a3ddc  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1024) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #49 pc 000000000014e468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #50 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #51 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #52 pc 00000000004c3694  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #53 pc 00000000004c473c  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #54 pc 0000000000506754  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1332) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #55 pc 00000000000cf070  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: 4af1efc55252d66adbdfe430d101fefd)
+11-05 09:02:27.146 21146 21146 F DEBUG   :       #56 pc 00000000000716c4  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4af1efc55252d66adbdfe430d101fefd)
+11-05 10:49:27.904  1637  1637 F libc    : src/proot/src/path/proc.c:52: Action readlink_proc(const Tracee *, char *, const char *, const char *, Comparison): assertion "comparison == compare_paths("/proc", base)" failed
+11-05 23:06:02.089 22446 25687 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 25687 (DefaultDispatch), pid 22446 (wangzan101.mika)
+11-05 23:06:02.251 31301 31301 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-05 23:06:02.251 31301 31301 F DEBUG   : Build fingerprint: 'HONOR/KOZ-AL00/HNKOZ-S:10/HONORKOZ-AL00/4.0.0.136C00:user/release-keys'
+11-05 23:06:02.251 31301 31301 F DEBUG   : Revision: '0'
+11-05 23:06:02.251 31301 31301 F DEBUG   : ABI: 'arm64'
+11-05 23:06:02.252 31301 31301 F DEBUG   : Timestamp: 2026-11-05 23:06:02+0800
+11-05 23:06:02.252 31301 31301 F DEBUG   : pid: 22446, tid: 25687, name: DefaultDispatch  >>> com.wangzan101.mika <<<
+11-05 23:06:02.252 31301 31301 F DEBUG   : uid: 10161
+11-05 23:06:02.252 31301 31301 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-05 23:06:02.252 31301 31301 F DEBUG   : Abort message: 'Error, cannot access an invalid/free'd bitmap here!'
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x0  0000000000000000  x1  0000000000006457  x2  0000000000000006  x3  0000007835cbb0b0
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x4  0000000000000000  x5  0000000000000000  x6  0000000000000000  x7  7f7f7f7f7f7f7f7f
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x8  00000000000000f0  x9  00000079293a99a0  x10 0000000000000000  x11 0000000000000001
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x12 0000000000000018  x13 ffffffffffffffff  x14 0000000000000004  x15 ffffffffffffffff
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x16 0000007929461950  x17 0000007929441010  x18 00000077db4e8000  x19 00000000000057ae
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x20 0000000000006457  x21 00000000ffffffff  x22 0000007835cbd020  x23 000000001399f508
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x24 0000007827906800  x25 0000000000000034  x26 0000000013e1d3e0  x27 000000006f648ae8
+11-05 23:06:02.253 31301 31301 F DEBUG   :     x28 0000000000000003  x29 0000007835cbb150
+11-05 23:06:02.253 31301 31301 F DEBUG   :     sp  0000007835cbb090  lr  00000079293f5bc0  pc  00000079293f5bf0
+11-05 23:06:02.470 31301 31301 F DEBUG   : 
+11-05 23:06:02.470 31301 31301 F DEBUG   : backtrace:
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #00 pc 000000000006fbf0  /apex/com.android.runtime/lib64/bionic/libc.so (abort+164) (BuildId: 4af1efc55252d66adbdfe430d101fefd)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #01 pc 0000000000009a74  /system/lib64/liblog.so (__android_log_assert+324) (BuildId: 112a3703a951586241f432958af765d8)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #02 pc 00000000001a240c  /system/lib64/libandroid_runtime.so (Bitmap_getPixel(_JNIEnv*, _jobject*, long, int, int)+280) (BuildId: 223281c89c34539d84f4d240a5c556e5)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #03 pc 00000000002ee058  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+168) (BuildId: 33ea30d01c8f8efcc97923c710f0181303c1dff9)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #04 pc 00000000024b0378  /memfd:/jit-cache (deleted) (android.graphics.Bitmap.getPixel+136)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #05 pc 00000000024c170c  /memfd:/jit-cache (deleted) (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$frameGrid$2$1$1.invoke+92)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #06 pc 00000000024c1648  /memfd:/jit-cache (deleted) (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$frameGrid$2$1$1.invoke+168)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #07 pc 00000000024c12b0  /memfd:/jit-cache (deleted) (com.wangzan101.mika.core.visual.FrameGrid$Companion.sample+528)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #08 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #09 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #10 pc 00000000002f4218  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #11 pc 00000000002eef68  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+900) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #12 pc 00000000005b2f84  /apex/com.android.runtime/lib64/libart.so (MterpInvokeVirtual+836) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.470 31301 31301 F DEBUG   :       #13 pc 000000000013f814  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #14 pc 000000000002499c  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (com.wangzan101.mika.cap.phone.a11y.AndroidScreen$frameGrid$2.invokeSuspend+148)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #15 pc 00000000002c4908  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.214322969176268902+320) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #16 pc 00000000005a3ddc  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1024) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #17 pc 000000000014e468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #18 pc 000000000207237c  /memfd:/jit-cache (deleted) (kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith+204)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #19 pc 000000000204634c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.DispatchedTask.run+1180)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #20 pc 00000000022b9a1c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.internal.LimitedDispatcher$Worker.run+124)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #21 pc 00000000022b9ec4  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.TaskImpl.run+68)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #22 pc 00000000021c529c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely+60)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #23 pc 000000000210ab4c  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask+364)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #24 pc 00000000021c45d4  /memfd:/jit-cache (deleted) (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker+180)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #25 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #26 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #27 pc 00000000002f4218  /apex/com.android.runtime/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+384) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #28 pc 00000000002eef68  /apex/com.android.runtime/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+900) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #29 pc 00000000005b5330  /apex/com.android.runtime/lib64/libart.so (MterpInvokeDirect+588) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #30 pc 000000000013f914  /apex/com.android.runtime/lib64/libart.so (mterp_op_invoke_direct+20) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #31 pc 000000000048c340  /data/app/com.wangzan101.mika-sDR2u4ImYnI0tbnhrQg61w==/base.apk (kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #32 pc 00000000002c4908  /apex/com.android.runtime/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.llvm.214322969176268902+320) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #33 pc 00000000005a3ddc  /apex/com.android.runtime/lib64/libart.so (artQuickToInterpreterBridge+1024) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #34 pc 000000000014e468  /apex/com.android.runtime/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #35 pc 0000000000145334  /apex/com.android.runtime/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #36 pc 0000000000154198  /apex/com.android.runtime/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+252) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #37 pc 00000000004c3694  /apex/com.android.runtime/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #38 pc 00000000004c473c  /apex/com.android.runtime/lib64/libart.so (art::InvokeVirtualOrInterfaceWithJValues(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, jvalue const*)+416) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #39 pc 0000000000506754  /apex/com.android.runtime/lib64/libart.so (art::Thread::CreateCallback(void*)+1332) (BuildId: 184faa3d168755a63d13dc4ef02c74fa)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #40 pc 00000000000cf070  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+36) (BuildId: 4af1efc55252d66adbdfe430d101fefd)
+11-05 23:06:02.471 31301 31301 F DEBUG   :       #41 pc 00000000000716c4  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4af1efc55252d66adbdfe430d101fefd)

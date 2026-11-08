@@ -60,4 +60,5 @@
     <string name="tool_tap">Tocar</string>
     <string name="tool_type">Escribir texto</string>
     <string name="tool_clear">Borrar campo</string>
+    <string name="tool_root">Comando root</string>
 </resources>

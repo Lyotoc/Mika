@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.ProviderInfo
 import android.os.Binder
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -28,7 +29,7 @@ import kotlin.system.exitProcess
  * 内置助手进程的入口。Mika 经本机无线调试(adbd 的 exec: 服务)以 shell 身份启动它:
  * `CLASSPATH=<base.apk> app_process /system/bin --nice-name=<包名>:helper com.wangzan101.mika.shell.HelperMain <包名> <Mika 的 uid> <签名指纹>`,
  * 一次性口令从标准输入读一行(见 [HelperHandoff.command])。电脑经 USB 调试跑「用电脑启动」脚本时起的也是它,命令和参数相同
- * (见 [HelperHandoff.usbScript])。
+ * (见 [HelperHandoff.usbScript]);已 root 的手机上经 `su 2000 -c` 以 shell 身份起的也是它(见 [HelperHandoff.rootCommand])。
  *
  * 特权逻辑全在 [ShellService];这里只负责把它的 Binder 交给 Mika,并且在 Mika 进程结束后不退出:
  * 撤掉 Mika 留下的改动,等 Mika 再起来时重新交接。Mika 死后一会儿还没回来、而它交来的心愿([RestoreWish])要拉起来时,
@@ -107,6 +108,55 @@ object HelperProcess {
             }
         }
 
+        /**
+         * 安卓 11 及更早交 Binder 的那一步。
+         *
+         * 这些版本上 getContentProviderExternal 给的是 ContentProviderNative 的代理,它把自己记着的 authority
+         * (外部拿到的代理里是字面量 "unknown")写进调用,provider 一侧会以「authority 对不上」拒绝;
+         * 同时安卓 10 的 call 形状也和安卓 12 起不同。这里先把代理里的 authority 改成真的,
+         * 再按调用形状试:4 个参数的是 (authority, method, arg, extras),3 个参数的是本地老签名。
+         */
+        /**
+         * 安卓 11 及更早交 Binder 的那一步。
+         *
+         * 这些版本上 getContentProviderExternal 给的是 ContentProviderProxy,它自己把 authority 写成字面量
+         * "unknown" 发给 provider,provider 一侧核对 authority 就会拒。这里按调用形状试:
+         * 5 个参数的 (callingPackage, authority, method, arg, extras) 是安卓 10 的形状,
+         * 4 个参数的是 (callingPackage, method, arg, extras),3 个的是本地老签名。
+         */
+        @SuppressLint("PrivateApi")
+        private fun callProviderPreS(provider: Any, authority: String, extras: Bundle): Bundle? {
+            val calls = provider.javaClass.methods
+                .filter { it.name == "call" && it.parameterTypes.lastOrNull() == Bundle::class.java }
+                .sortedByDescending { it.parameterTypes.size }
+            Log.i(TAG, "call shapes=" + calls.joinToString { c -> "(" + c.parameterTypes.joinToString { it.simpleName } + ")" })
+            var last: Throwable? = null
+            for (call in calls) {
+                val argSets: List<Array<Any?>> = when (call.parameterTypes.size) {
+                    3 -> listOf(arrayOf(HelperHandoff.METHOD_ATTACH, null, extras))
+                    4 -> listOf(
+                        arrayOf(ShellContext.SHELL_PACKAGE, HelperHandoff.METHOD_ATTACH, null, extras),
+                        arrayOf(authority, HelperHandoff.METHOD_ATTACH, null, extras),
+                    )
+                    else -> listOf(
+                        arrayOf(ShellContext.SHELL_PACKAGE, authority, HelperHandoff.METHOD_ATTACH, null, extras),
+                        arrayOf(ShellContext.SHELL_PACKAGE, null, HelperHandoff.METHOD_ATTACH, null, extras),
+                    )
+                }
+                for (args in argSets) {
+                    try {
+                        val r = call.invoke(provider, *args) as Bundle?
+                        Log.i(TAG, "provider call ok with ${call.parameterTypes.size} args")
+                        return r
+                    } catch (t: Throwable) {
+                        last = (t as? java.lang.reflect.InvocationTargetException)?.targetException ?: t
+                        Log.w(TAG, "provider call(${call.parameterTypes.size}) failed: ${last.message}")
+                    }
+                }
+            }
+            throw last ?: IllegalStateException("provider call failed")
+        }
+
         private enum class Outcome { Accepted, Rejected, Failed }
 
         /** 经 ActivityManager 拿 Mika 的 provider(同 `content call` 的做法),把 Binder 和自报的 uid/pid 交过去。 */
@@ -150,11 +200,18 @@ object HelperProcess {
                         putLong(HelperHandoff.KEY_GAVE_UP_AT, r.gaveUpAtMs)
                     }
                 }
-                val call = provider.javaClass.methods.first {
-                    it.name == "call" && it.parameterTypes.size == 5 && it.parameterTypes[0] == AttributionSource::class.java
+                // 安卓 12 起 provider.call 多一个 AttributionSource 参数(5 个);安卓 11 及更早只有
+                // (method, arg, extras)(3 个)。两条路最后都落到 HelperHub.call(method, arg, extras),
+                // 调用方身份本来由 Binder 自己带,所以更早的系统照常能核对。
+                val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val call = provider.javaClass.methods.first {
+                        it.name == "call" && it.parameterTypes.size == 5 && it.parameterTypes[0] == AttributionSource::class.java
+                    }
+                    val caller = AttributionSource.Builder(Process.myUid()).setPackageName(ShellContext.SHELL_PACKAGE).build()
+                    call.invoke(provider, caller, authority, HelperHandoff.METHOD_ATTACH, null, extras) as Bundle?
+                } else {
+                    callProviderPreS(provider, authority, extras)
                 }
-                val caller = AttributionSource.Builder(Process.myUid()).setPackageName(ShellContext.SHELL_PACKAGE).build()
-                val result = call.invoke(provider, caller, authority, HelperHandoff.METHOD_ATTACH, null, extras) as Bundle?
                 if (result?.getBoolean(HelperHandoff.KEY_ACCEPTED) != true) {
                     Log.w(TAG, "handoff rejected: ${result?.getString(HelperHandoff.KEY_REASON)}")
                     return Outcome.Rejected

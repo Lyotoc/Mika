@@ -28,6 +28,7 @@ import com.wangzan101.mika.core.uistate.AppProfiles
 import com.wangzan101.mika.core.uistate.LaunchChoice
 import com.wangzan101.mika.core.uistate.LaunchChooser
 import com.wangzan101.mika.core.uistate.OpenedElsewhere
+import com.wangzan101.mika.core.uistate.SettlingField
 import com.wangzan101.mika.core.uistate.UnseenField
 import com.wangzan101.mika.core.uistate.normalize
 import com.wangzan101.mika.core.uistate.Relocation
@@ -243,8 +244,10 @@ class AndroidScreen(
     }
 
     override suspend fun frameGrid(): FrameGrid? = withContext(Dispatchers.IO) {
-        val bmp = display.current?.frames?.value ?: return@withContext null
-        runCatching { FrameGrid.sample(bmp.width, bmp.height, bmp::getPixel) }.getOrNull()
+        // 走 sampleFrame:预览帧是共享的,直接读 frames.value 可能读到正被回收的那一张(native abort)
+        display.current?.sampleFrame { f ->
+            runCatching { FrameGrid.sample(f.width, f.height, f::pixel) }.getOrNull()
+        }
     }
 
     override suspend fun isProtected(): Boolean = withContext(Dispatchers.IO) {
@@ -507,31 +510,43 @@ class AndroidScreen(
         // 网页编辑区要粘贴才收得到输入;密码框不经剪贴板
         var pasteUnavailable = web && field.isPassword
         val placeholder = ScreenReader.placeholderOf(field)
-        val io = object : TextField {
-            override fun read(): String? {
-                if (field.refresh()) return ScreenReader.fieldText(field, placeholder, text)
-                // 有的 App 内容一变就换掉输入控件:当前拿着输入焦点的那个和原来的类型、资源 ID、位置都对得上才改读它,
-                // 否则算读不回,也不往别的框里写
-                val now = focusedEditable()?.takeIf { sameField(original, it) } ?: return null
-                field = now
-                return ScreenReader.fieldText(now, placeholder, text)
-            }
-            override fun write(text: String): Boolean {
-                if (!web || pasteUnavailable) return setText(field, text)
-                return when (val r = inputText(field, text)) {
+        /** 读回框里的字;节点被 App 换掉时改读拿着焦点的那个(见 [TextField.read] 的说明)。 */
+        fun readBack(typing: String = text): String? {
+            if (field.refresh()) return ScreenReader.fieldText(field, placeholder, typing)
+            // 有的 App 内容一变就换掉输入控件:当前拿着输入焦点的那个和原来的类型、资源 ID、位置都对得上才改读它,
+            // 否则算读不回,也不往别的框里写
+            val now = focusedEditable()?.takeIf { sameFieldForRead(original, it) } ?: return null
+            field = now
+            return ScreenReader.fieldText(now, placeholder, typing)
+        }
+        // 两条写入通道:原生框整段设字;网页编辑区要选择后粘贴才收得到输入。
+        // 「写完等落定、重试只做整段替换」由 SettlingField 统一做(见它的说明):不等就读回会把「还没应用」当成
+        // 「没写进去」,重试时粘贴又会接在旧字后面,同一段字就成了两遍。
+        val raw = object : TextField {
+            override fun read(): String? = readBack()
+            override fun write(text: String): Boolean =
+                if (!web || pasteUnavailable) setText(field, text)
+                else when (val r = inputText(field, text)) {
                     null -> { pasteUnavailable = true; setText(field, text) }
                     else -> r
                 }
-            }
             override fun retry(text: String): Boolean {
                 if (web || pasteUnavailable) return write(text)
-                // 原生框第一次 SET_TEXT 没落地时,第二次改走选择加粘贴,让编辑器收到真实输入。
                 return when (val r = inputText(field, text)) {
                     null -> { pasteUnavailable = true; setText(field, text) }
                     else -> r
                 }
             }
         }
+        val io = SettlingField(
+            raw,
+            SystemClock::uptimeMillis,
+            { ms -> Thread.sleep(ms) },
+            clear = { setText(field, "") },
+            // 密码框读不回原文,等不出结果,别白等
+            waitMs = if (field.isPassword) 0L else WRITE_WAIT_MS,
+            pollMs = POLL_MS,
+        )
         val textsBefore = read().texts.toSet()
         // 像人一样一段一段打出来(见 TypingPacing);密码框、要粘贴才收得到的网页框照旧一次写入。
         // 写不进、框不接受半截字时停下,下面照旧整段写入并读回核对
@@ -540,10 +555,18 @@ class AndroidScreen(
         val verification = typeAndVerify(
             io, text, TYPE_ATTEMPTS,
             settle = { withEventClock { clock -> clock.awaitQuiet(READBACK_QUIET_MS, READBACK_CAP_MS) } },
-            // 读回一直不变时,看界面上有没有冒出含所输文字的新文字(联想词等)
+            // 读回一直不变时,看界面上有没有冒出含所输文字的新文字(联想词等)。
+            // 有的 App 把输入的字显示在输入框外面那层(搜索条自绘),树里要过一会儿才冒出来:等一会儿再判定,
+            // 别把「刚写进去、还没画出来」当成没写进去。
             reacted = {
                 val typed = text.filterNot { it.isWhitespace() }
-                (read().texts.toSet() - textsBefore).any { typed in it.filterNot { c -> c.isWhitespace() } }.also { frozen = it }
+                val deadline = SystemClock.uptimeMillis() + REACTED_WAIT_MS
+                var seen = (read().texts.toSet() - textsBefore).any { typed in it.filterNot { c -> c.isWhitespace() } }
+                while (!seen && SystemClock.uptimeMillis() < deadline) {
+                    Thread.sleep(POLL_MS)
+                    seen = (read().texts.toSet() - textsBefore).any { typed in it.filterNot { c -> c.isWhitespace() } }
+                }
+                seen.also { frozen = it }
             },
             secret = field.isPassword,
         )
@@ -1682,6 +1705,18 @@ class AndroidScreen(
             kotlin.math.hypot((a.rect.centerX() - b.rect.centerX()).toDouble(), (a.rect.centerY() - b.rect.centerY()).toDouble()) <= moveTol
     }
 
+    /**
+     * 读回用的同一性:除了 [sameField] 的严格判断,还认「输入后框变高/变矮」这一种——很多 App(安卓 10 的小红书搜索框)
+     * 一有字就把结果面板撑开,框的位置和资源 ID 不变、高度变了,严格的大小判断会判成另一个框,读回就成了「读不出」。
+     * 只用来决定「读哪个框」;原来的中心点还在它的范围里才算同一个。
+     */
+    private fun sameFieldForRead(a: FieldShape, n: AccessibilityNodeInfo): Boolean {
+        if (sameField(a, n)) return true
+        val b = FieldShape.of(n)
+        if (a.cls != b.cls || a.rid != b.rid) return false
+        return b.rect.contains(a.rect.centerX(), a.rect.centerY())
+    }
+
     /** 像输入入口:可点,不是按钮类,且带提示语或名字像搜索。 */
     private fun looksLikeInputEntry(n: AccessibilityNodeInfo): Boolean {
         val target = ancestorOrSelf(n) { it.isClickable } ?: return false
@@ -1832,17 +1867,13 @@ class AndroidScreen(
 
     // ---------- 画面 ----------
 
-    /** 预览帧的粗粒度亮度格子;没有画面时为 null。 */
-    private fun frameSignature(): IntArray? {
-        val bmp = display.current?.frames?.value ?: return null
-        return runCatching { FrameMath.lumaGrid(bmp.width, bmp.height, bmp::getPixel) }.getOrNull()
-    }
+    /** 预览帧的粗粒度亮度格子;没有画面时为 null。走 [com.wangzan101.mika.cap.phone.display.PhoneDisplay.sampleFrame], 采样期间画面不会被回收。 */
+    private fun frameSignature(): IntArray? =
+        display.current?.sampleFrame { f -> runCatching { FrameMath.lumaGrid(f.width, f.height, f::pixel) }.getOrNull() }
 
     /** 画面是否全黑(防截屏窗口在虚拟屏上画成黑色);没有画面时为 null。 */
-    private fun frameBlack(): Boolean? {
-        val bmp = display.current?.frames?.value ?: return null
-        return runCatching { FrameMath.isBlack(bmp.width, bmp.height, bmp::getPixel) }.getOrNull()
-    }
+    private fun frameBlack(): Boolean? =
+        display.current?.sampleFrame { f -> runCatching { FrameMath.isBlack(f.width, f.height, f::pixel) }.getOrNull() }
 
     // ---------- 事件时钟 ----------
 
@@ -1937,6 +1968,10 @@ class AndroidScreen(
         /** 慢拖拖不动时快划一下的时长(像人手划滚轮)。 */
         const val WHEEL_SWIPE_MS = 400L
         const val TYPE_ATTEMPTS = 2
+        /** 写入后等 App 把字应用到输入框上最多多久。安卓 10 的小红书搜索框要几百毫秒才读得到新字。 */
+        const val WRITE_WAIT_MS = 1_200L
+        /** 读回对不上时,等界面上冒出所输文字最多多久(有的 App 把字画在输入框外面那层)。 */
+        const val REACTED_WAIT_MS = 1_500L
         const val WEB_VIEW = "android.webkit.WebView"
         const val PASTE_WAIT_MS = 1_500L
         const val HINT_PASTE_UNAVAILABLE = "This field only receives real input (it needs a paste), but the clipboard could not be used safely, " +

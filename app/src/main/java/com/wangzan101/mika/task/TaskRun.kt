@@ -34,6 +34,8 @@ import com.wangzan101.mika.cap.phone.a11y.LazyPhoneScreen
 import com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility
 import com.wangzan101.mika.cap.phone.a11y.PhoneUnavailable
 import com.wangzan101.mika.cap.phone.PhoneServices
+import com.wangzan101.mika.cap.phone.setup.RootShell
+
 import com.wangzan101.mika.cap.phone.a11y.launchableApps
 import com.wangzan101.mika.confirm.ConfirmationNotifier
 import com.wangzan101.mika.MikaApp
@@ -86,6 +88,8 @@ import com.wangzan101.mika.core.tool.ToolDispatcher
 import com.wangzan101.mika.core.vision.VisionService
 import com.wangzan101.mika.cap.phone.display.AgentDisplay
 import com.wangzan101.mika.cap.phone.display.LazyAgentDisplay
+import com.wangzan101.mika.cap.phone.display.MainScreenDisplay
+import com.wangzan101.mika.cap.phone.display.PhoneDisplay
 import com.wangzan101.mika.record.RunHandle
 import com.wangzan101.mika.record.RunStore
 import com.wangzan101.mika.settings.FeatureFlags
@@ -548,7 +552,14 @@ class TaskRun(
                 shellBinder = shell.asBinder()
                 side.launch { conn.shell.map { it != null }.collect { shellUp.value = it } }
                 val agentDisplay = LazyAgentDisplay(metrics.widthPixels, metrics.heightPixels) {
-                    suspend fun create() = resources.acquire(Dispatchers.IO, AgentDisplay::release) { AgentDisplay(shell, metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, service.getSystemService(DisplayManager::class.java)) }
+                    suspend fun create() = resources.acquire(Dispatchers.IO, PhoneDisplay::release) {
+                        // 安卓 10:无障碍看不到 Mika 的虚拟屏,任务改在用户的主屏上操作(见 MainScreenDisplay)
+                        if (MainScreenDisplay.supported) {
+                            MainScreenDisplay(shell, metrics.widthPixels, metrics.heightPixels, mainScreenShotDir())
+                        } else {
+                            AgentDisplay(shell, metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, service.getSystemService(DisplayManager::class.java))
+                        }
+                    }
                     try {
                         create()
                     } catch (e: Exception) {
@@ -1216,6 +1227,17 @@ class TaskRun(
     @Suppress("DEPRECATION")
     private fun mainScreenMetrics(): DisplayMetrics = DisplayMetrics().also {
         service.getSystemService(DisplayManager::class.java).getDisplay(Display.DEFAULT_DISPLAY).getRealMetrics(it)
+    }
+
+    /**
+     * 安卓 10 在主屏上操作时,截屏文件放在 Mika 自己的外部文件目录里:内置助手以 shell 身份写,App 自己读。
+     * 拿不到外部目录时退回缓存目录(那里 shell 写不进去,截屏会失败并照实报)。
+     */
+    private fun mainScreenShotDir(): File {
+        val dir = service.getExternalFilesDir(null) ?: service.cacheDir
+        val shots = File(dir, "screen")
+        runCatching { shots.mkdirs() }
+        return shots
     }
 
     /** 网页接管界面顶部的说明:接管原因的话,付款时再带上商品、金额、地址。 */

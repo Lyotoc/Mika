@@ -10,4 +10,6 @@
     <string name="confirm_in_app">En %1$s</string>
     <string name="confirm_target">Para: %1$s</string>
     <string name="confirm_content">Contenido: %1$s</string>
+    <string name="confirm_root">Comando root</string>
+    <string name="confirm_root_where">todo el teléfono (root)</string>
 </resources>

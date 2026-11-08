@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PixelFormat
 import android.util.Log
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -147,9 +148,12 @@ class OverlayHost internal constructor(private val service: ScreenAccessibility)
                 (if (touchable && injectedGestures == 0) 0 else WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE),
             PixelFormat.TRANSLUCENT,
         ).apply {
-            // 按整块屏幕摆,不让系统再把窗口挤进状态栏、导航栏以内:要避开哪里由调用方按 area() 定
-            fitInsetsTypes = 0
-            layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            // 按整块屏幕摆,不让系统再把窗口挤进状态栏、导航栏以内:要避开哪里由调用方按 area() 定。
+            // fitInsetsTypes 是安卓 11 起才有的(更早的浮层本来就不按 insets 内缩);刘海模式在安卓 10 上只有 SHORT_EDGES。
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) fitInsetsTypes = 0
+            layoutInDisplayCutoutMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            else WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             place(placement)
         }
         val window = OverlayWindow(this, frame, params, owners, touchable)

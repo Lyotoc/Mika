@@ -57,6 +57,8 @@ internal class ShellClipboard(private val context: Context) {
         val s = String::class.java
         val i = Int::class.javaPrimitiveType!!
         val candidates = listOf(
+            // Android 10:包名、userId(安卓 11 起才多出 attributionTag)
+            arrayOf(s, i),
             // Android 14+:包名、attributionTag、userId、deviceId
             arrayOf(s, s, i, i),
             // Android 12–13:包名、attributionTag、userId
@@ -70,6 +72,8 @@ internal class ShellClipboard(private val context: Context) {
     private fun call(method: Method): Any? {
         val userId = Process.myUid() / 100_000
         val args: Array<Any?> = when (method.parameterTypes.size) {
+            // 安卓 10:包名、userId
+            2 -> arrayOf(ShellContext.SHELL_PACKAGE, userId)
             // 后台保存/还原不是用户点「粘贴」,不伪造用户操作;隐私栈与框架默认值一样为空。
             7 -> arrayOf(ShellContext.SHELL_PACKAGE, callerLabel, "", null, userId, 0, false)
             // ShellContext 是默认设备的系统上下文,与原 ClipboardManager 使用的设备一致。

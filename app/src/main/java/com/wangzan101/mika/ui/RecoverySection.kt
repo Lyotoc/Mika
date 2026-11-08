@@ -84,7 +84,8 @@ object RecoveryCopy {
     /**
      * 默认打开、还没生效的那一项下面说一句:没配好手机操作就提示先完成设置(配好后自动打开),
      * 自动打开没成功就照实说;生效了或用户关掉了不多说。
-     * 助手只用 USB 启动命令起过([HelperRestart.UsbCommand])时,靠无线调试重起助手的两项说清用不上、重启后要再运行命令。
+     * 助手只用 USB 启动命令起过([HelperRestart.UsbCommand])时,靠无线调试重起助手的两项说清用不上、重启后要再运行命令;
+     * 用 root 启动([HelperRestart.Root])、这两项又还没生效时,说清用不上:重启后 Mika 自己经 su 再起。
      */
     fun pending(
         c: RecoveryCapability, consent: RecoveryConsent, paired: Boolean, autoFailed: Set<RecoveryCapability>,
@@ -92,6 +93,7 @@ object RecoveryCopy {
     ): String? = when {
         !consent.wants(c) -> null
         restart == HelperRestart.UsbCommand && c in NEEDS_PAIRING -> tr(R.string.rec_needs_pairing)
+        restart == HelperRestart.Root && c in NEEDS_PAIRING && !consent.isApplied(c) -> tr(R.string.rec_root_not_needed)
         consent.isApplied(c) -> null
         !paired -> NEED_SETUP
         c in autoFailed -> FAILED

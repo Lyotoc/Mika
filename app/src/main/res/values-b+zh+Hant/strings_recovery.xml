@@ -20,4 +20,5 @@
     <string name="rec_setting_unavailable">這臺手機不允許 Mika 在開機時開啟無線偵錯。重啟後請手動開啟,Mika 會自己連上。</string>
     <string name="rec_not_recovered">上次開機沒能自動連上。確認連著信任過的 Wi-Fi、無線偵錯開著,Mika 會自己連上。</string>
     <string name="rec_needs_pairing">要先配對過無線偵錯才用得上。現在的助手是用 USB 指令啟動的,手機重啟後請再執行一次指令。</string>
+    <string name="rec_root_not_needed">用 root 啟動助手時用不上:手機重啟後,Mika 會自己再用 root 啟動它。</string>
 </resources>

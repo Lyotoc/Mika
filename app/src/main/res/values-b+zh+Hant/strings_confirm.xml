@@ -10,4 +10,6 @@
     <string name="confirm_in_app">在 %1$s</string>
     <string name="confirm_target">目標:%1$s</string>
     <string name="confirm_content">內容:%1$s</string>
+    <string name="confirm_root">root 指令</string>
+    <string name="confirm_root_where">整支手機(root)</string>
 </resources>

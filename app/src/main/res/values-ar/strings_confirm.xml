@@ -10,4 +10,6 @@
     <string name="confirm_in_app">في %1$s</string>
     <string name="confirm_target">إلى: %1$s</string>
     <string name="confirm_content">المحتوى: %1$s</string>
+    <string name="confirm_root">أمر Root</string>
+    <string name="confirm_root_where">الهاتف بالكامل (root)</string>
 </resources>

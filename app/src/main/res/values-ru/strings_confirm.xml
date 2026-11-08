@@ -10,4 +10,6 @@
     <string name="confirm_in_app">В приложении «%1$s»</string>
     <string name="confirm_target">Кому: %1$s</string>
     <string name="confirm_content">Содержимое: %1$s</string>
+    <string name="confirm_root">Команда root</string>
+    <string name="confirm_root_where">весь телефон (root)</string>
 </resources>

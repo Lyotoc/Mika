@@ -49,11 +49,23 @@ object HelperHandoff {
      * [certPin] 是 Mika 签名证书的指纹,不是秘密,放在参数里。
      */
     fun command(apkPath: String, packageName: String, appUid: Int, certPin: String): String =
-        "read n; (echo \"\$n\" | CLASSPATH=${quote(apkPath)} setsid app_process /system/bin " +
+        launch(apkPath, packageName, appUid, certPin, launcher = "setsid")
+
+    /** [command] 和 [rootCommand] 共用的一段:[launcher] 是放在 app_process 前面的那几个词。 */
+    private fun launch(apkPath: String, packageName: String, appUid: Int, certPin: String, launcher: String): String =
+        "read n; (echo \"\$n\" | CLASSPATH=${quote(apkPath)} $launcher app_process /system/bin " +
             "--nice-name=${quote(processName(packageName))} $HELPER_CLASS ${quote(packageName)} $appUid ${quote(certPin)} " +
             ">/dev/null 2>&1 &); read _"
 
     fun stdinLine(nonce: String): ByteArray = "$nonce\n".toByteArray(Charsets.UTF_8)
+
+    /**
+     * 经 su 起助手时交给 `su 2000 -c` 的命令:先打一行 `id -u`,App 读到 2000(su 答应了、也切到了 shell 身份)才写口令;
+     * 之后和 [command] 一样(口令走标准输入,App 收到交接后关流)。su 没答应时一行也没有,口令就不写出去。
+     * 和 USB 启动脚本一样加 nohup:su 进程退出时有的实现会给它那一组发挂断信号,助手忽略它,不跟着退出。
+     */
+    fun rootCommand(apkPath: String, packageName: String, appUid: Int, certPin: String): String =
+        "id -u; " + launch(apkPath, packageName, appUid, certPin, launcher = "nohup setsid")
 
     /** 「用电脑启动」的脚本文件名,放在 App 的外部文件目录里(电脑经 USB 调试以 shell 身份读它)。 */
     const val USB_SCRIPT = "usb-start.sh"

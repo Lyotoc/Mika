@@ -26,22 +26,22 @@ class AgentDisplay(
     private val bufferHeight: Int,
     dpi: Int,
     private val displayManager: DisplayManager,
-) {
+) : PhoneDisplay {
     private val thread = HandlerThread("agent-display").apply { start() }
     private val handler = Handler(thread.looper)
     private val reader = ImageReader.newInstance(bufferWidth, bufferHeight, PixelFormat.RGBA_8888, 2)
 
-    val displayId: Int
+    override val displayId: Int
 
     // ImageReader 始终是建屏时的物理尺寸;应用的逻辑坐标随虚拟屏旋转,与主屏的方向无关。
     private val geometry get() = DisplayFrameGeometry(bufferWidth, bufferHeight,
         displayManager.getDisplay(displayId)?.rotation ?: Surface.ROTATION_0)
-    val width: Int get() = geometry.width
-    val height: Int get() = geometry.height
+    override val width: Int get() = geometry.width
+    override val height: Int get() = geometry.height
 
     private val _frames = MutableStateFlow<Bitmap?>(null)
     /** 实时画面:限速 ≤10 帧/秒,缩到短边 ≤360。 */
-    val frames: StateFlow<Bitmap?> = _frames.asStateFlow()
+    override val frames: StateFlow<Bitmap?> = _frames.asStateFlow()
 
     private val frameLock = Any()
     private var fullFrame: Bitmap? = null // 带行填充的整帧,宽 = rowStride / pixelStride
@@ -108,7 +108,7 @@ class AgentDisplay(
     }
 
     /** 最新一帧的整幅 PNG;还没收到画面时返回 null。 */
-    fun latestFramePng(): ByteArray? {
+    override fun latestFramePng(): ByteArray? {
         val crop = latestFrameBitmap() ?: return null
         return try {
             ByteArrayOutputStream().also { crop.compress(Bitmap.CompressFormat.PNG, 100, it) }.toByteArray()
@@ -118,12 +118,12 @@ class AgentDisplay(
     }
 
     /** OCR 使用原始尺寸的画面副本，避免 PNG 编码和解码；调用方负责 recycle。 */
-    fun latestFrameBitmap(): Bitmap? = synchronized(frameLock) {
+    override fun latestFrameBitmap(): Bitmap? = synchronized(frameLock) {
         val bmp = fullFrame
         if (!hasFrame || bmp == null) null else uprightDisplayFrame(bmp, frameGeometry, paint = paint)
     }
 
-    fun release() {
+    override fun release() {
         if (released) return
         released = true
         runCatching { shell.releaseDisplay(displayId) }

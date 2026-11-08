@@ -19,4 +19,4 @@ class LazyDisplay<T : Any>(val width: Int, val height: Int, private val create: 
     suspend fun get(): T = made ?: lock.withLock { made ?: create().also { made = it } }
 }
 
-typealias LazyAgentDisplay = LazyDisplay<AgentDisplay>
+typealias LazyAgentDisplay = LazyDisplay<PhoneDisplay>

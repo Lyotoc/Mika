@@ -60,4 +60,5 @@
     <string name="tool_tap">タップ</string>
     <string name="tool_type">テキストを入力</string>
     <string name="tool_clear">入力欄をクリア</string>
+    <string name="tool_root">root コマンド</string>
 </resources>

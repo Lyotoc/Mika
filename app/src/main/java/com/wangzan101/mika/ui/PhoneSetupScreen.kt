@@ -123,7 +123,11 @@ fun PhoneSetupScreen(status: SystemStatus, repair: Boolean, onFix: (Fix) -> Unit
     var usbAsked by rememberSaveable { mutableStateOf(false) }
     var stalledMs by remember { mutableLongStateOf(0L) }
 
-    val inputs = status.setupInputs(discovery, repairing, accessibilitySkipped, confirmed, revisit, stalledMs, usbAsked)
+    // 已 root 的手机多一条路:用 root 启动(找得到 su 才显示);有这条路时开发者选项、无线调试都没有也不算设置不了
+    val root = phone.shellManager.root
+    LaunchedEffect(Unit) { root.refresh() }
+    val rootState by root.state.collectAsState()
+    val inputs = status.setupInputs(discovery, repairing, accessibilitySkipped, confirmed, revisit, stalledMs, usbAsked, rootState.suPresent)
     val view = PhoneSetupFlow.view(inputs)
     // 停在同一处没有进展时计时,换了地方从头算;到了时限就不用再数
     val stallPoint = PhoneSetupFlow.stallPoint(view)
@@ -173,7 +177,6 @@ fun PhoneSetupScreen(status: SystemStatus, repair: Boolean, onFix: (Fix) -> Unit
     // 打开引导页时把「用电脑启动」的脚本备好(助手不在时带新口令)
     LaunchedEffect(Unit) { phone.shellManager.usbScript.refresh() }
     val usbCommand = remember { phone.shellManager.usbScript.command() }
-
     val copyUsbCommand = {
         context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(PhoneSetupCopy.USB_TITLE, usbCommand))
         Toast.makeText(context, PhoneSetupCopy.USB_COPIED, Toast.LENGTH_SHORT).show()
@@ -228,6 +231,8 @@ fun PhoneSetupScreen(status: SystemStatus, repair: Boolean, onFix: (Fix) -> Unit
         usbCommand = usbCommand,
         onAskUsb = { usbAsked = true },
         onCopyUsbCommand = copyUsbCommand,
+        rootLine = rootState.takeIf { it.suPresent }?.let { PhoneSetupCopy.rootOptionLine(it.startGrant) },
+        onRootStart = { if (rootState.start) root.retryStart() else root.setStart(true) },
     )
     // 卡在哪一步都能把诊断信息发给作者:用的是引导页此刻的输入,用户确认过的步骤也在里面
     if (diagnosticsOpen) {
@@ -246,6 +251,7 @@ fun PhoneSetupScreen(status: SystemStatus, repair: Boolean, onFix: (Fix) -> Unit
  * [usbCommand] 不为空时才有「改用电脑启动」:平时不出现,只在无线调试一步有一行「找不到无线调试?」([onAskUsb]);
  * [SetupView.usbFallback] 为真时,在当前这一步里给一张卡片,是一句说明、命令和复制按钮([onCopyUsbCommand])。
  * [SetupPhase.Unavailable] 时这个环境设置不了手机操作:只有一张说明卡片和「知道了」,不列步骤。
+ * [rootLine] 不为空时(手机已 root,找得到 su)没成功前清单下面有一条「用 root 启动」([onRootStart]),下面一句是说明或 su 的答复。
  */
 @Composable
 fun PhoneSetupContent(
@@ -269,6 +275,8 @@ fun PhoneSetupContent(
     usbCommand: String? = null,
     onAskUsb: () -> Unit = {},
     onCopyUsbCommand: () -> Unit = {},
+    rootLine: String? = null,
+    onRootStart: () -> Unit = {},
 ) {
     val canRevisit = view.phase == SetupPhase.Guide || view.phase == SetupPhase.Failed
     fun revisitable(step: SetupStep) = canRevisit && step != view.current && step in PhoneSetupFlow.REVISITABLE &&
@@ -320,6 +328,7 @@ fun PhoneSetupContent(
                             }
                         }
                     }
+                    if (rootLine != null && view.phase != SetupPhase.Success) RootStartOption(rootLine, onRootStart)
                     if (SetupStep.entries.any(::revisitable)) FooterNote(PhoneSetupCopy.REVISIT_NOTE)
                     if (view.phase != SetupPhase.Success) FooterNote(PhoneSetupCopy.SKIP_NOTE)
                 }
@@ -352,6 +361,16 @@ fun PhoneSetupContent(
                 }
             }
         }
+    }
+}
+
+/** 已 root 的手机:一个按钮用 root 启动助手(问 su 一次),下面一句说明或 su 的答复。 */
+@Composable
+private fun RootStartOption(line: String, onStart: () -> Unit) {
+    val c = MikaTheme.colors
+    Column(Modifier.fillMaxWidth().padding(top = 4.dp)) {
+        MikaButton(PhoneSetupCopy.ROOT_OPTION, onStart, Modifier.testTag("setup-root"), kind = ButtonKind.Text, size = ButtonSize.Small)
+        Text(line, Modifier.padding(start = 12.dp, end = 12.dp).testTag("setup-root-line"), style = MikaType.Caption, color = c.ink2)
     }
 }
 

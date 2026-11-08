@@ -60,4 +60,5 @@
     <string name="tool_tap">탭</string>
     <string name="tool_type">텍스트 입력</string>
     <string name="tool_clear">입력란 지우기</string>
+    <string name="tool_root">root 명령</string>
 </resources>

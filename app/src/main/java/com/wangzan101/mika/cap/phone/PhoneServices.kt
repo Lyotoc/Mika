@@ -1,6 +1,10 @@
 package com.wangzan101.mika.cap.phone
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import com.wangzan101.mika.cap.phone.a11y.ScreenAccessibility
+import com.wangzan101.mika.cap.phone.display.MainScreenDisplay
 import com.wangzan101.mika.cap.phone.setup.BuiltinShellManager
 import com.wangzan101.mika.cap.phone.setup.BuiltinShellRecovery
 import com.wangzan101.mika.cap.phone.setup.PairingCoordinator
@@ -10,6 +14,9 @@ import com.wangzan101.mika.cap.phone.shell.HelperHub
 import com.wangzan101.mika.cap.phone.shell.SharedShell
 import com.wangzan101.mika.core.shell.BuiltinShellControl
 import com.wangzan101.mika.settings.RecoverySettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 
 /**
  * 手机能力在 Mika 进程里的服务,由 App 建一份、经 [Owner] 给出:内置助手(交接落点、配对与看门狗、
@@ -18,6 +25,20 @@ import com.wangzan101.mika.settings.RecoverySettings
  */
 class PhoneServices(context: Context) {
     private val app = context.applicationContext
+
+    init {
+        // 安卓 10 没有无障碍截图接口:用户屏幕的截图交给内置助手的 screencap(见 ScreenAccessibility.shellCapture)
+        ScreenAccessibility.shellCapture = { mainScreenCapture() }
+    }
+
+    /** 截一张主屏,解成位图;助手还没连上、或截不到时返回 null。 */
+    private suspend fun mainScreenCapture(): Bitmap? = withContext(Dispatchers.IO) {
+        val shell = hub.shell.value ?: return@withContext null
+        val dir = app.getExternalFilesDir(null) ?: return@withContext null
+        val shots = File(dir, "screen").also { it.mkdirs() }
+        val bytes = MainScreenDisplay.capture(shell, File(shots, "capture.png")) ?: return@withContext null
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
 
     /** 助手交来 Binder 的落点:助手只认一个进程里的一个落点。 */
     val hub = HelperHub(app)

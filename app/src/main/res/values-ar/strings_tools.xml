@@ -60,4 +60,5 @@
     <string name="tool_tap">نقر</string>
     <string name="tool_type">كتابة نص</string>
     <string name="tool_clear">مسح الحقل</string>
+    <string name="tool_root">أمر Root</string>
 </resources>
